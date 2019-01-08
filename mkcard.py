@@ -29,13 +29,7 @@ def img_merge(bg_img, fg_img, coord=(0, 0)):
 
 
 def find_id(grid=None, n=None):
-    """
-    find the position of the grid in the whole database.
-    The id is composed of :
-     - the number of move required to solve the problem
-     - the index of the problem amongst those of the same number of move
-     - the number of reachable state of the problem
-     """
+    # Return an info dict of the grid given
     current_move = 0
     current_index = 0
     index_for_moves = 0
