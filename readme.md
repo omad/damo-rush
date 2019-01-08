@@ -13,27 +13,50 @@ I didn't reuse/code a solver as I feel that having the solution printed on the 
 # Usage
 ## Dependancy installation
 ```sh
-pip3 install --upgrade --user cairosvg pillow
+$ pip3 install --upgrade --user cairosvg pillow
 ```
 
 ## Graphics generation
 This needs to be done once initialy and everytime you change the svg graphics or add one:
 ```sh
-./generate_graphics.py
+$ ./generate_graphics.py
 ```
 
-## Standalon card
+## Standalone card
 Makes a random card show up:
 ```sh
-./mkcard.py
+$ ./mkcard.py
 ```
 
-Same but chose number of move required (must be <= 60):
+You can specify a difficulty by chosing a number of move required (must be <= 60):
 ```sh
-./mkcard.py --level 42
+$ ./mkcard.py --level 42
 ```
+
+![card output](example/standalone_example.png "standalone output")
+
+
 ## Deck generation
-TODO
+```sh
+$ ./generate_deck.py nb_move index_puzzle icon n
+$ ./generate_deck.py 30 29 elasmosaurus 4
+```
+ - nb\_move and index\_puzzle represent the index of the 'highest' puzzle that will be in the deck.
+   - nb\_move is the number of move require to solve the puzzle. By lack of a better metrics this is used to represent the difficulty.
+   - index\_puzzle, indicate the rank of the puzzle amongst all the one for nb\_move
+ - icon represent the svg file that will be used to identified the deck. Two files are required
+   - icon.svg, a svg of 1/3 x 1/3 inch page properties
+   - icon-big.svg, a svg of 2 x 2 inch page properties
+   - ['stegosaurus', 'parasaurolophus', 'elasmosaurus'] are the provided available preset.
+ - n is the number of puzzle produced.
+
+
+![front output](example/deck/elasmosaurus-front.png "front output")
+![back output](example/deck/elasmosaurus-back.png "back output")
+![even output](example/deck/elasmosaurus-even-1.png "even output")
+![odd output](example/deck/elasmosaurus-odd-2.png "odd output")
+![even output](example/deck/elasmosaurus-even-3.png "even output")
+![odd output](example/deck/elasmosaurus-odd-4.png "odd output")
 
 # Credits
 See dedicated file [here](credits.md).

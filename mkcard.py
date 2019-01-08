@@ -273,7 +273,8 @@ if __name__ == '__main__':
                 lines = [line for line in lines if line.split()[0] == str(args.level)]
             line = choice(lines)
             try:
-                make_card(line).show()
+                make_card(line).save('standalone.png')
+
                 break
             except NotPlayableWithRegularGame:
                 print('Grid generated not playable, chosing another one')
