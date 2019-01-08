@@ -6,7 +6,7 @@ The dinosaur theme, used as a mean to differentiate multiple deck, has been chos
 # Limitation known
 The size of the input svg in the repo and some constant in the code are specificaly chosen and hardcoded, as the generated image will be printed on a specific sized card.
 
-I aim to use [printerstudio](www.printerstudio.com) for this, with the 'bridge' size card.
+I aim to use [printerstudio](https://www.printerstudio.com) for this, with the 'bridge' size card.
 
 I didn't reuse/code a solver as I feel that having the solution printed on the back of the card is pretty useless. This also free the place and allow me to print twice more problems per deck !
 
