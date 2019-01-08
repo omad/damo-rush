@@ -43,7 +43,7 @@ $ ./mkcard.py --level 42
 ## Deck generation
 ```sh
 $ ./generate_deck.py nb_move index_puzzle icon n
-$ ./generate_deck.py 30 29 elasmosaurus 4
+$ ./generate_deck.py 30 1114 elasmosaurus 4
 ```
  - nb\_move and index\_puzzle represent the index of the 'highest' puzzle that will be in the deck.
    - nb\_move is the number of move require to solve the puzzle. By lack of a better metrics this is used to represent the difficulty.
