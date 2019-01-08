@@ -10,6 +10,10 @@ I aim to use [printerstudio](www.printerstudio.com) for this, with the 'bridge' 
 
 I didn't reuse/code a solver as I feel that having the solution printed on the back of the card is pretty useless. This also free the place and allow me to print twice more problems per deck !
 
+The puzzle who require more than 12 car (rare) or more than 4 truck (I haven't looked if it is even possible in the database) are dismissed as they are not playable with the physical game.
+
+The database, and thus, the puzzles generated can contains up to two 'wall' cells: a 1x1 blocker that cannot move. Those are not dismissed as that would trim a lot of interresting puzzle and I think they are quite easy to DIY...
+
 # Usage
 ## Dependancy installation
 ```sh
