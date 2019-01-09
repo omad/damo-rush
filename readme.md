@@ -3,17 +3,6 @@ Dino-Rush allow to create custom problems deck of any size and any difficulty fo
 
 The dinosaur theme, used as a mean to differentiate multiple deck, has been chosen quite arbitrary because dinosaur are cool!
 
-# Limitation known
-The size of the input svg in the repo and some constant in the code are specificaly chosen and hardcoded, as the generated image will be printed on a specific sized card.
-
-I aim to use [printerstudio](https://www.printerstudio.com) for this, with the 'bridge' size card.
-
-I didn't reuse/code a solver as I feel that having the solution printed on the back of the card is pretty useless. This also free the place and allow me to print twice more problems per deck !
-
-The puzzle who require more than 12 car (rare) or more than 4 truck (I haven't looked if it is even possible in the database) are dismissed as they are not playable with the physical game.
-
-The database, and thus, the puzzles generated can contains up to two 'wall' cells: a 1x1 blocker that cannot move. Those are not dismissed as that would trim a lot of interresting puzzle and I think they are quite easy to DIY...
-
 # Usage
 ## Dependancy installation
 ```sh
@@ -39,7 +28,6 @@ $ ./mkcard.py --level 42
 
 ![card output](example/standalone_example.png "standalone output")
 
-
 ## Deck generation
 ```sh
 $ ./generate_deck.py nb_move index_puzzle icon n
@@ -54,6 +42,7 @@ $ ./generate_deck.py 30 1114 elasmosaurus 4
    - ['stegosaurus', 'parasaurolophus', 'elasmosaurus'] are the provided available preset.
  - n is the number of puzzle produced.
 
+Result of the above command:
 
 ![front output](example/deck/elasmosaurus-front.png "front output")
 ![back output](example/deck/elasmosaurus-back.png "back output")
@@ -61,6 +50,30 @@ $ ./generate_deck.py 30 1114 elasmosaurus 4
 ![odd output](example/deck/elasmosaurus-odd-2.png "odd output")
 ![even output](example/deck/elasmosaurus-even-3.png "even output")
 ![odd output](example/deck/elasmosaurus-odd-4.png "odd output")
+
+## Printed result
+I ordered 3 printd decks of 36 cards (which makes 35 cards * 2 puzzle plus a 'readme' card) on [printerstudio](https://www.printerstudio.com) using the 'bridge' size card.
+I printed the puzzle from the top of the database (most number of move needed to solve) with the following parameters:
+```sh
+./generate_deck.py 60 1 stegosaurus 70
+./generate_deck.py 46 8 parasaurolophus 70
+./generate_deck.py 44 29 elasmosaurus 70
+```
+
+For a total of 210 quite hard problem !!
+
+I bet this is *way too much* and I won't have them all solved for maybe years, but I wanted enough decks to have my own custom collection.
+
+~reception and thus photo here in a few week~
+
+# Limitation known
+The size of the input svg in the repo and some constant in the code are specificaly chosen and hardcoded, as the generated image will be printed on a specific sized card.
+
+I didn't reuse/code a solver as I feel that having the solution printed on the back of the card is pretty useless. This also free the place and allow me to print twice more problems per deck !
+
+The puzzle who require more than 12 car (rare) or more than 4 truck (I haven't looked if it is even possible in the database) are dismissed as they are not playable with the physical game.
+
+The database, and thus, the puzzles generated can contains up to two 'wall' cells: a 1x1 blocker that cannot move. Those are not dismissed as that would trim a lot of interresting puzzle and I think they are quite easy to DIY...
 
 # Credits
 See dedicated file [here](credits.md).
