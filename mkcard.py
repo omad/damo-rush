@@ -240,7 +240,7 @@ def make_card(database_line, model='bridge', deck=None, n=None, len_n=3):
         img_merge(card, dino, (dx, dy))
 
         font = ImageFont.truetype(fonts['numbers'], unit // 2)
-        text = f'{n:03d}'
+        text = f'{n:0{len_n}d}'
         n_sizex, n_sizey = draw.textsize(text, font=font)
         nx = card.size[0] // 2 + unit // 10
         ny = dy + dino.size[1] // 2 - n_sizey // 2
