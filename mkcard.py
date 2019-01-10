@@ -256,6 +256,7 @@ if __name__ == '__main__':
                         nargs='?',
                         default=None)
     parser.add_argument('--level', metavar='<n>', type=int)
+    parser.add_argument('--save', action='store_true', help='Save a card instead of showing it')
     args = parser.parse_args()
     if args.line:
         make_card(args.line).show()
@@ -267,8 +268,10 @@ if __name__ == '__main__':
                 lines = [line for line in lines if line.split()[0] == str(args.level)]
             line = choice(lines)
             try:
-                make_card(line).save('standalone.png')
-
+                if args.save:
+                    make_card(line).save('standalone.png')
+                else:
+                    make_card(line).show()
                 break
             except NotPlayableWithRegularGame:
                 print('Grid generated not playable, chosing another one')
