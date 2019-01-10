@@ -33,14 +33,14 @@ $ ./mkcard.py --level 42
 $ ./generate_deck.py nb_move index_puzzle icon n
 $ ./generate_deck.py 30 1114 elasmosaurus 4
 ```
- - nb\_move and index\_puzzle represent the index of the 'highest' puzzle that will be in the deck.
-   - nb\_move is the number of move require to solve the puzzle. By lack of a better metrics this is used to represent the difficulty.
-   - index\_puzzle, indicate the rank of the puzzle amongst all the one for nb\_move
- - icon represent the svg file that will be used to identified the deck. Two files are required
-   - icon.svg, a svg of 1/3 x 1/3 inch page properties
-   - icon-big.svg, a svg of 2 x 2 inch page properties
+ - `nb_move` and `index_puzzle` represent the index of the 'highest' puzzle that will be in the deck.
+   - `nb_move` is the number of move require to solve the puzzle. By lack of a better metrics this is used to represent the difficulty.
+   - `index_puzzle`, indicate the rank of the puzzle amongst all the one for nb\_move
+ - `icon` represent the svg file that will be used to identified the deck. Two files are required
+   - `icon.svg`, a svg of 1/3 x 1/3 inch page properties
+   - `icon-big.svg`, a svg of 2 x 2 inch page properties
    - ['stegosaurus', 'parasaurolophus', 'elasmosaurus'] are the provided available preset.
- - n is the number of puzzle produced.
+ - `n` is the number of puzzle produced.
 
 Result of the above command:
 
@@ -62,7 +62,7 @@ I printed the puzzle from the top of the database (most number of move needed to
 
 For a total of 210 quite hard problem !!
 
-I bet this is *way too much* and I won't have them all solved for maybe years, but I wanted enough decks to have my own custom collection.
+I bet this is way too much and I won't have them all solved for maybe years, but I wanted enough decks to have my own custom collection.
 
 ~reception and thus photo here in a few week~
 
