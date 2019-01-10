@@ -86,6 +86,14 @@ def make_puzzle_img(elements, unit=100):
                'barrier': {'-': (0, 0), '|': (0, 0)}}
 
     grid = Image.open(os.path.join(objsdir, 'grid.png'))
+    draw = ImageDraw.Draw(grid)
+
+    c = 3
+    for x in range(1, 6):
+        for y in range(1, 6):
+
+            draw.ellipse((x * 100 - c, y * 100 - c, x * 100 + c, y * 100 + c),
+                         fill = 'grey', outline ='grey')
 
     available_colors = []
 
@@ -188,7 +196,7 @@ def make_back_title_card(deck, model='bridge'):
             text = text.strip('# ')
             font = ImageFont.truetype(fonts['credits'], fontsize)
             sizex, sizey = draw.textsize(text, font=font)
-            draw.text((currentx + indent, currenty), text, (0, 0, 0), font=font)
+            draw.text((currentx + indent, currenty), text, 'grey', font=font)
             currenty += sizey + sizey // 4
 
     qr = qrcode.QRCode(box_size=7)
