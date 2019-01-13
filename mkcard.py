@@ -6,11 +6,11 @@ import os.path
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-from collections import defaultdict
 from random import shuffle, randrange, choice
 import qrcode
 
 from generate_graphics import colors, objsdir, fonts
+from common import Puzzle, get_puzzle
 
 
 class NotPlayableWithRegularGame(Exception):
@@ -53,32 +53,6 @@ def find_id(grid=None, n=None):
     raise ValueError('grid not in the database')
 
 
-def parse_data(database_line):
-    parts = database_line.split()
-    if len(parts) == 1:
-        data = database_line
-    elif len(parts) == 3:
-        _, data, _ = database_line.split()
-    else:
-        raise ValueError('Wrong input format', parts)
-
-    puzzle_info = find_id(data)
-    if puzzle_info['index'] == puzzle_info['over_total']:
-        puzzle_info['index_eol'] = '¬'
-    else:
-        puzzle_info['index_eol'] = ''
-
-    elements = defaultdict(list)
-    nb_wall = 0
-    for i, c in enumerate(data):
-        if c != 'o':
-            if c == 'x':
-                nb_wall += 1
-                c = 'x' + str(nb_wall)
-            elements[c].append(i)
-    return elements, puzzle_info
-
-
 def make_puzzle_img(elements, unit=100):
     # Offset from a centered form for each type of element
     offsets = {'truck': {'-': (0, unit), '|': (unit, 0)},
@@ -93,7 +67,7 @@ def make_puzzle_img(elements, unit=100):
         for y in range(1, 6):
 
             draw.ellipse((x * 100 - c, y * 100 - c, x * 100 + c, y * 100 + c),
-                         fill = 'grey', outline ='grey')
+                         fill='grey', outline='grey')
 
     available_colors = []
 
@@ -101,6 +75,7 @@ def make_puzzle_img(elements, unit=100):
     nb_truck = len([k for k, v in elements.items() if len(v) == 3])
 
     if nb_car > 12 or nb_truck > 4:  # Walls are easy to diy and would cut too much puzzles
+    #if nb_car > 12 or nb_truck != 5:  # to generate deck for the 'limo' add-on elements
         raise NotPlayableWithRegularGame
 
     for k, v in elements.items():
@@ -197,7 +172,7 @@ def make_back_title_card(deck, model='bridge'):
             font = ImageFont.truetype(fonts['credits'], fontsize)
             sizex, sizey = draw.textsize(text, font=font)
             draw.text((currentx + indent, currenty), text, 'grey', font=font)
-            currenty += sizey + sizey // 4
+            currenty += sizey + sizey // 4  # 125% interline
 
     qr = qrcode.QRCode(box_size=7)
     qr.add_data('https://gitlab.com/crazyiop/dino-rush/blob/master/credits.md')
@@ -210,7 +185,7 @@ def make_back_title_card(deck, model='bridge'):
     return card
 
 
-def make_card(database_line, model='bridge', deck=None, n=None, len_n=3):
+def make_card(puzzle, model='bridge', deck=None, n=None, len_n=3):
     unit = 100  # dpi of a cell of the puzzle
 
     safe_offset = tuple([(item1 - item2) // 2 for item1, item2
@@ -218,8 +193,7 @@ def make_card(database_line, model='bridge', deck=None, n=None, len_n=3):
 
     card = Image.new("RGBA", models[model]['bleed'])
 
-    elements, info = parse_data(database_line)
-    puzzle_img = make_puzzle_img(elements, unit)
+    puzzle_img = make_puzzle_img(puzzle.get_elements(), unit)
 
     # Center the puzzle on the card
     margex, margey = tuple([(item1 - item2) // 2 for item1, item2
@@ -228,17 +202,27 @@ def make_card(database_line, model='bridge', deck=None, n=None, len_n=3):
 
     # Add puzzle index text
     draw = ImageDraw.Draw(card)
-    font = ImageFont.truetype(fonts['numbers'], unit)
-    text = f"{info['moves']:0{len_n}d}"
-    lvl_sizex, lvl_sizey = draw.textsize(text, font=font)
-    x, y = safe_offset[0] + unit // 5, safe_offset[1] + unit // 5
-    draw.text((x, y), text, (0, 0, 0), font=font)
+    if puzzle.nb_move and puzzle.index:
+        font = ImageFont.truetype(fonts['numbers'], unit)
+        text = f"{puzzle.nb_move}"
+        lvl_sizex, lvl_sizey = draw.textsize(text, font=font)
+        x, y = safe_offset[0] + unit // 5, safe_offset[1] + unit // 5
+        draw.text((x, y), text, (0, 0, 0), font=font)
 
-    font = ImageFont.truetype(fonts['numbers'], unit // 2)
-    text = ' {:,}'.format(info['index']).replace(',', ' ') + info['index_eol']
-    index_sizex, index_sizey = draw.textsize(text, font=font)
-    x, y = x + lvl_sizex, y + lvl_sizey - index_sizey
-    draw.text((x, y), text, (100, 100, 100), font=font)
+        font = ImageFont.truetype(fonts['numbers'], unit // 2)
+        text = ' {:,}'.format(puzzle.index).replace(',', ' ')
+        index_sizex, index_sizey = draw.textsize(text, font=font)
+        x, y = x + lvl_sizex, y + lvl_sizey - index_sizey
+        draw.text((x, y), text, (100, 100, 100), font=font)
+
+        """
+        font = ImageFont.truetype(fonts['numbers'], unit // 4)
+        text = ' /{:,}'.format(puzzle.over).replace(',', ' ')
+        over_sizex, over_sizey = draw.textsize(text, font=font)
+        x, y = x + index_sizex, y + index_sizey - over_sizey
+        draw.text((x, y), text, (100, 100, 100), font=font)
+        """
+
 
     # Add deck info if available
     if (deck is not None and n is not None):
@@ -267,19 +251,15 @@ if __name__ == '__main__':
     parser.add_argument('--save', action='store_true', help='Save a card instead of showing it')
     args = parser.parse_args()
     if args.line:
-        make_card(args.line).show()
+        make_card(Puzzle(0, args.line, 0, 0, 0)).show()
     else:
         while True:
-            f = open('rush.txt', 'r')
-            lines = f.readlines()
-            if args.level:
-                lines = [line for line in lines if line.split()[0] == str(args.level)]
-            line = choice(lines)
+            puzzle = get_puzzle(args.level)
             try:
                 if args.save:
-                    make_card(line).save('standalone.png')
+                    make_card(puzzle).save('standalone.png')
                 else:
-                    make_card(line).show()
+                    make_card(puzzle).show()
                 break
             except NotPlayableWithRegularGame:
                 print('Grid generated not playable, chosing another one')

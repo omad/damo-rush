@@ -7,24 +7,7 @@ import shutil
 from mkcard import make_card, make_front_title_card, make_back_title_card
 from mkcard import NotPlayableWithRegularGame
 
-
-def index_from_id(nb_move_search, index_move_search):
-    current_index = 0
-    current_move = 0
-    f = open('rush.txt', 'r')
-    for i, line in enumerate(f.readlines()):
-        nb_move, data, nb_state = line.split()
-        nb_move = int(nb_move)
-        if nb_move != current_move:
-            current_index = 1
-            current_move = nb_move
-            if current_move < nb_move_search:
-                raise ValueError(f'Cannot find {nb_move_search}, {index_move_search}')
-        else:
-            current_index += 1
-        if nb_move == nb_move_search and current_index == index_move_search:
-            return i + 1
-    raise ValueError(f'Cannot find {nb_move_search}, {index_move_search}')
+from common import load_db
 
 
 def generate_title_card(icon):
@@ -43,24 +26,32 @@ def generate_deck(nb_move, index_move, icon, n):
 
     generate_title_card(icon)
 
-    f = open('rush.txt', 'r')
-    start_index = index_from_id(nb_move, index_move)
-    for _ in range(start_index - 1):
-        f.readline()
+    puzzles = load_db('rush.txt')
+
+    i = [puzzle.nb_move for puzzle in puzzles].index(nb_move) + index_move - 1
 
     len_n = len(str(n))
     while n:
-        line = f.readline()
+        if i < len(puzzles):
+            puzzle = puzzles[i]
+        else:
+            raise IndexError('Not enough grid corresponding to the constraint in the database')
+
         try:
-            card = make_card(line, deck=icon, n=n, len_n=len_n)
+            card = make_card(puzzle, deck=icon, n=n, len_n=len_n)
             n -= 1
         except NotPlayableWithRegularGame:
-            print(f'WARNING: {line} is not playable with a regular game, skipping it...')
+            print(f'[Card] {puzzle.grid} is not playable with a regular game, skipping it...')
+            i += 1
             continue
 
         parity = 'odd' if n % 2 else 'even'
         card.save(os.path.join('generated', f'{icon}-{parity}-{n + 1:0{len_n}d}.png'), 'PNG')
-        print(f'[Card] {icon} {n + 1} generated')
+        print(f'[Card] {icon} {n + 1} generated ({puzzle.nb_move}, {puzzle.index}/{puzzle.over})')
+
+        i += 1
+
+    print(f'[Info] use {puzzles[i].nb_move, puzzles[i].index} to generate the continuing deck')
 
 
 if __name__ == '__main__':
