@@ -29,6 +29,7 @@ $ ./mkcard.py --level 42
 ![card output](example/standalone_example.png "standalone output")
 
 ## Deck generation
+### Standard deck
 ```sh
 $ ./generate_deck.py nb_move index_puzzle icon n
 $ ./generate_deck.py 30 1114 elasmosaurus 4
@@ -51,13 +52,20 @@ Result of the above command:
 ![even output](example/deck/elasmosaurus-even-3.png "even output")
 ![odd output](example/deck/elasmosaurus-odd-4.png "odd output")
 
+### Customized constraint
+When generating a deck, puzzle are checked to be playable with a normal physical game (i.e. maximum 0 wall, 12 car, 4 truck).
+
+Those {min,max}×{wall,car,truck} value can be tweak. For example
+ - if you bought the limo extension, use `--mintruck 5 --maxtruck 5` to generate a specific deck with 5 truck for every puzzle.
+ - if you handcraft 2 bariers (which I recommend as it is quite easy and open quite a lot of puzzle from the database), use `--maxwall 2` to generate deck with 0 up to 2 wall per puzzle.
+
 ## Printed result
 I ordered 3 printd decks of 36 cards (which makes 35 cards * 2 puzzle plus a 'readme' card) on [printerstudio](https://www.printerstudio.com) using the 'bridge' size card.
 I printed the puzzle from the top of the database (most number of move needed to solve) with the following parameters:
 ```sh
-./generate_deck.py 60 1 stegosaurus 70
-./generate_deck.py 46 8 parasaurolophus 70
-./generate_deck.py 44 29 elasmosaurus 70
+./generate_deck.py 60 1 stegosaurus 70 --maxwall 2
+./generate_deck.py 46 8 parasaurolophus 70 --maxwall 2
+./generate_deck.py 44 29 elasmosaurus 70 --maxwall 2
 ```
 
 For a total of 210 quite hard problem !!

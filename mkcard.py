@@ -7,6 +7,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from random import shuffle, randrange, choice
+from collections import Counter
 import qrcode
 
 from generate_graphics import colors, objsdir, fonts
@@ -53,7 +54,7 @@ def find_id(grid=None, n=None):
     raise ValueError('grid not in the database')
 
 
-def make_puzzle_img(elements, unit=100):
+def make_puzzle_img(elements, unit=100, limits=None):
     # Offset from a centered form for each type of element
     offsets = {'truck': {'-': (0, unit), '|': (unit, 0)},
                'car': {'-': (unit // 2, unit), '|': (unit, unit // 2)},
@@ -71,12 +72,16 @@ def make_puzzle_img(elements, unit=100):
 
     available_colors = []
 
-    nb_car = len([k for k, v in elements.items() if len(v) == 2])
-    nb_truck = len([k for k, v in elements.items() if len(v) == 3])
+    if limits is None:
+        # Default limits, corresponding to standard physical game
+        limits = {1: {'min':0, 'max':0},
+                  2: {'min':1, 'max':12},
+                  3: {'min':0, 'max':4}}
 
-    if nb_car > 12 or nb_truck > 4:  # Walls are easy to diy and would cut too much puzzles
-    #if nb_car > 12 or nb_truck != 5:  # to generate deck for the 'limo' add-on elements
-        raise NotPlayableWithRegularGame
+    nb_elements = Counter(len(v) for v in elements.values())
+    for size, nb in nb_elements.items():
+        if nb < limits[size]['min'] or nb > limits[size]['max']:
+            raise NotPlayableWithRegularGame
 
     for k, v in elements.items():
         if len(available_colors) == 0:
@@ -185,7 +190,7 @@ def make_back_title_card(deck, model='bridge'):
     return card
 
 
-def make_card(puzzle, model='bridge', deck=None, n=None, len_n=3):
+def make_card(puzzle, model='bridge', deck=None, n=None, len_n=3, limits=None):
     unit = 100  # dpi of a cell of the puzzle
 
     safe_offset = tuple([(item1 - item2) // 2 for item1, item2
@@ -193,7 +198,7 @@ def make_card(puzzle, model='bridge', deck=None, n=None, len_n=3):
 
     card = Image.new("RGBA", models[model]['bleed'])
 
-    puzzle_img = make_puzzle_img(puzzle.get_elements(), unit)
+    puzzle_img = make_puzzle_img(puzzle.get_elements(), unit, limits)
 
     # Center the puzzle on the card
     margex, margey = tuple([(item1 - item2) // 2 for item1, item2
