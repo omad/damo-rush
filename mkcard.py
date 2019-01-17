@@ -155,7 +155,7 @@ def make_front_title_card(deck, model='bridge'):
     return card
 
 
-def make_back_title_card(deck, model='bridge'):
+def make_back_title_card(deck, deck_parameter, model='bridge'):
     base_font_size = 18
     # low effort dummy paste of the credits.md file
     card = Image.new("RGBA", models[model]['bleed'][::-1])
@@ -184,9 +184,23 @@ def make_back_title_card(deck, model='bridge'):
     qr.make(fit=True)
     qr_img = qr.make_image().convert("RGBA")
 
+    param = qrcode.QRCode(box_size=4)
+    param.add_data(deck_parameter)
+    param.make(fit=True)
+    param_img = param.make_image().convert("RGBA")
+
+    # x position: qr right-align on safe_offset, param centered on qr
     qrx = card.size[0] - safe_offset[0] - qr_img.size[0]
-    qry = card.size[1] // 2 - qr_img.size[1] // 2
+    paramx = card.size[0] - safe_offset[0] - qr_img.size[0] // 2 - param_img.size[1] // 2
+
+    # y position: equalize the 3 distance (up, middle, down) of the 2 qr code and the border
+    leftover = (card.size[1] - qr_img.size[1] - param_img.size[1]) // 3
+    qry = leftover
+    paramy = 2 * leftover + qr_img.size[1]
+
     img_merge(card, qr_img, (qrx, qry))
+    img_merge(card, param_img, (paramx, paramy))
+
     return card
 
 

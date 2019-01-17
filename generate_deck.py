@@ -10,11 +10,11 @@ from mkcard import NotPlayableWithRegularGame
 from common import load_db
 
 
-def generate_title_card(icon):
+def generate_title_card(icon, deck_parameter):
     front = make_front_title_card(icon)
     front.save(os.path.join('generated', f'{icon}-front.png'), 'PNG')
     print(f'[Card] {icon} front generated')
-    back = make_back_title_card(icon)
+    back = make_back_title_card(icon, deck_parameter)
     back.save(os.path.join('generated', f'{icon}-back.png'), 'PNG')
     print(f'[Card] {icon} back generated')
 
@@ -24,7 +24,9 @@ def generate_deck(nb_move, index_move, icon, n, limits):
     shutil.rmtree('generated', ignore_errors=True)
     os.makedirs('generated')
 
-    generate_title_card(icon)
+    deck_parameter_str = f'({nb_move},{index_move}),{n},{limits}'.replace(' ','')
+    print(deck_parameter_str)
+    generate_title_card(icon, deck_parameter_str)
 
     puzzles = load_db('rush.txt')
 
