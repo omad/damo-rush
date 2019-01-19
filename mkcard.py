@@ -79,9 +79,10 @@ def make_puzzle_img(elements, unit=100, limits=None):
                   3: {'min':0, 'max':4}}
 
     nb_elements = Counter(len(v) for v in elements.values())
-    for size, nb in nb_elements.items():
-        if nb < limits[size]['min'] or nb > limits[size]['max']:
+    for size, minmax in limits.items():
+        if nb_elements[size] < minmax['min'] or nb_elements[size] > minmax['max']:
             raise NotPlayableWithRegularGame
+
 
     for k, v in elements.items():
         if len(available_colors) == 0:
