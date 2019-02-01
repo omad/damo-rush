@@ -10,7 +10,7 @@ from random import shuffle, randrange
 from collections import Counter
 import qrcode
 
-from generate_graphics import colors, objsdir, fonts
+from mkgraphics import colors, objsdir, fonts
 from common import Puzzle, get_puzzle
 
 
@@ -169,7 +169,7 @@ def make_back_title_card(deck, deck_parameter, model='bridge'):
     for line in f.readlines():
         text = line.strip()
         if not text:
-            currenty += base_font_size
+            currenty += base_font_size // 2
         else:
             fontsize = base_font_size + [0, 8, 6][text.count('#')]
             indent = base_font_size * [2, 0, 1][text.count('#')]

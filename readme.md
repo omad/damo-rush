@@ -12,7 +12,7 @@ $ pip3 install --upgrade --user cairosvg pillow
 ## Graphics generation
 This needs to be done once initialy and everytime you change the svg graphics or add one:
 ```sh
-$ ./generate_graphics.py
+$ ./mkgraphics.py
 ```
 
 ## Standalone card
@@ -31,8 +31,8 @@ $ ./mkcard.py --level 42
 ## Deck generation
 ### Standard deck
 ```sh
-$ ./generate_deck.py nb_move index_puzzle icon n
-$ ./generate_deck.py 30 1114 elasmosaurus 4
+$ ./mkdeck.py nb_move index_puzzle icon n
+$ ./mkdeck.py 30 1114 elasmosaurus 4
 ```
  - `nb_move` and `index_puzzle` represent the index of the 'highest' puzzle that will be in the deck.
    - `nb_move` is the number of move require to solve the puzzle. By lack of a better metrics this is used to represent the difficulty.
@@ -63,9 +63,9 @@ Those {min,max}×{wall,car,truck} value can be tweak. For example
 I ordered 3 printd decks of 36 cards (which makes 35 cards * 2 puzzle plus a 'readme' card) on [printerstudio](https://www.printerstudio.com) using the 'bridge' size card.
 I printed the puzzle from the top of the database (most number of move needed to solve) with the following parameters:
 ```sh
-./generate_deck.py 60 1 stegosaurus 70 --maxwall 2
-./generate_deck.py 46 8 parasaurolophus 70 --maxwall 2
-./generate_deck.py 44 29 elasmosaurus 70 --maxwall 2
+./mkdeck.py 60 1 stegosaurus 70 --maxwall 2
+./mkdeck.py 46 8 parasaurolophus 70 --maxwall 2
+./mkdeck.py 44 29 elasmosaurus 70 --maxwall 2
 ```
 
 For a total of 210 quite hard problem !!
