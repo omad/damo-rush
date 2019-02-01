@@ -6,7 +6,7 @@ import os.path
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-from random import shuffle, randrange, choice
+from random import shuffle, randrange
 from collections import Counter
 import qrcode
 
@@ -74,15 +74,14 @@ def make_puzzle_img(elements, unit=100, limits=None):
 
     if limits is None:
         # Default limits, corresponding to standard physical game
-        limits = {1: {'min':0, 'max':2},
-                  2: {'min':1, 'max':12},
-                  3: {'min':0, 'max':4}}
+        limits = {1: {'min': 0, 'max': 2},
+                  2: {'min': 1, 'max': 12},
+                  3: {'min': 0, 'max': 4}}
 
     nb_elements = Counter(len(v) for v in elements.values())
     for size, minmax in limits.items():
         if nb_elements[size] < minmax['min'] or nb_elements[size] > minmax['max']:
             raise NotPlayableWithRegularGame
-
 
     for k, v in elements.items():
         if len(available_colors) == 0:
@@ -242,7 +241,6 @@ def make_card(puzzle, model='bridge', deck=None, n=None, len_n=3, limits=None):
         x, y = x + index_sizex, y + index_sizey - over_sizey
         draw.text((x, y), text, (100, 100, 100), font=font)
         """
-
 
     # Add deck info if available
     if (deck is not None and n is not None):

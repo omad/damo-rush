@@ -24,7 +24,7 @@ def generate_deck(nb_move, index_move, icon, n, limits):
     shutil.rmtree('generated', ignore_errors=True)
     os.makedirs('generated')
 
-    deck_parameter_str = f'({nb_move},{index_move}),{n},{limits}'.replace(' ','')
+    deck_parameter_str = f'({nb_move},{index_move}),{n},{limits}'.replace(' ', '')
     print(deck_parameter_str)
     generate_title_card(icon, deck_parameter_str)
 
@@ -56,7 +56,8 @@ def generate_deck(nb_move, index_move, icon, n, limits):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Generate a deck of card (decreasingly from starting point')
+    parser = argparse.ArgumentParser(description=('Generate a deck of card (decreasingly',
+                                                  'from starting point'))
     parser.add_argument('level', type=int, help='starting level')
     parser.add_argument('index', type=int, help='nth grid for given level')
     parser.add_argument('icon', type=str, help='discriminant icon for the deck')
@@ -80,9 +81,9 @@ if __name__ == '__main__':
     args.maxcar = max(args.maxcar, 18)  # Full grid of car
     args.maxtruck = max(args.maxtruck, 11)  # Primary car + full grid of truck
 
-    limits = {1: {'min':args.minwall, 'max':args.maxwall},
-              2: {'min':args.mincar, 'max':args.maxcar},
-              3: {'min':args.mintruck, 'max':args.maxtruck}}
+    limits = {1: {'min': args.minwall, 'max': args.maxwall},
+              2: {'min': args.mincar, 'max': args.maxcar},
+              3: {'min': args.mintruck, 'max': args.maxtruck}}
 
     print(f'creating deck with constraint: {limits}')
     generate_deck(args.level, args.index, args.icon, args.n, limits)

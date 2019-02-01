@@ -60,11 +60,10 @@ def load_db(filepath):
 
     return puzzles
 
+
 def get_puzzle(level=None):
     puzzles = load_db('rush.txt')
     if level:
         puzzles = [puzzle for puzzle in puzzles if puzzle.nb_move == level]
 
     return choice(puzzles)
-
-

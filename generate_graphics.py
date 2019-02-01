@@ -43,6 +43,7 @@ def generate_color(path, color, color_dict=colors):
     cairosvg.svg2png(url=out_filename + '.svg', write_to=out_filename + '.png', dpi=dpi)
     fin.close()
 
+
 def generate_size(root, file, size, prefix=''):
     filename = f'{prefix}{file}'
     svg_resize({'input': os.path.join(root, file),
@@ -53,6 +54,7 @@ def generate_size(root, file, size, prefix=''):
     cairosvg.svg2png(url=os.path.join('/', 'tmp', filename),
                      write_to=os.path.join(objsdir, filename.replace('svg', 'png')),
                      dpi=dpi)
+
 
 if __name__ == '__main__':
     print(f'[CLEAN] {objsdir}')
