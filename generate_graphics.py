@@ -33,15 +33,12 @@ fonts = {'title': os.path.join(assetdir, 'font', 'ZCOOLKuaiLe-Regular.ttf'),
 
 def generate_color(path, color, color_dict=colors):
     fin = open(path, 'r')
-    lines = fin.readlines()
     filename = os.path.splitext(os.path.basename(path))[0]
     out_filename = os.path.join(objsdir, f'{filename}-{color}')
     fout = open(out_filename + '.svg', 'w')
     print(f'[GEN] {filename}, {color}')
-    for line in lines:
-        new_line = line.replace('de7ec7', color_dict[color][0])
-        new_line = new_line.replace('bee71e', colors[color][1])
-        fout.write(new_line)
+    fout.write(fin.read().replace('de7ec7', color_dict[color][0])
+                         .replace('bee71e', color_dict[color][1]))
     fout.close()
     cairosvg.svg2png(url=out_filename + '.svg', write_to=out_filename + '.png', dpi=dpi)
     fin.close()
