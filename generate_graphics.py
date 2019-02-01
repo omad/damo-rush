@@ -4,6 +4,7 @@
 import os
 import shutil
 import cairosvg
+from svg_resize import process_stream as svg_resize
 
 assetdir = 'graphics'
 objsdir = 'objs'
@@ -36,13 +37,22 @@ def generate_color(path, color, color_dict=colors):
     filename = os.path.splitext(os.path.basename(path))[0]
     out_filename = os.path.join(objsdir, f'{filename}-{color}')
     fout = open(out_filename + '.svg', 'w')
-    print(f'[GEN] {filename}, {color}')
     fout.write(fin.read().replace('de7ec7', color_dict[color][0])
                          .replace('bee71e', color_dict[color][1]))
     fout.close()
     cairosvg.svg2png(url=out_filename + '.svg', write_to=out_filename + '.png', dpi=dpi)
     fin.close()
 
+def generate_size(root, file, size, prefix=''):
+    filename = f'{prefix}{file}'
+    svg_resize({'input': os.path.join(root, file),
+                'output': os.path.join('/', 'tmp', filename),
+                'width': f'{size}px',
+                'height': f'{size}px',
+                })
+    cairosvg.svg2png(url=os.path.join('/', 'tmp', filename),
+                     write_to=os.path.join(objsdir, filename.replace('svg', 'png')),
+                     dpi=dpi)
 
 if __name__ == '__main__':
     print(f'[CLEAN] {objsdir}')
@@ -52,11 +62,18 @@ if __name__ == '__main__':
     for root, dirs, files in os.walk(os.path.join(assetdir, 'color')):
         for file in files:
             for color in colors.keys():
+                print(f'[GEN] {file.replace("svg", "png")}, {color}')
                 generate_color(os.path.join(root, file), color)
 
     for root, dirs, files in os.walk(os.path.join(assetdir, 'static')):
         for file in files:
-            print(f'[GEN] {file}')
-            cairosvg.svg2png(url=os.path.join(root, file),
-                             write_to=os.path.join(objsdir, file.replace('svg', 'png')),
-                             dpi=dpi)
+            if root.endswith('dino'):
+                print(f'[GEN] {file.replace("svg", "png")}')
+                generate_size(root, file, 100)
+                print(f'[GEN] big{file.replace("svg", "png")}')
+                generate_size(root, file, 600, prefix='big')
+            else:
+                print(f'[GEN] {file.replace("svg", "png")}')
+                cairosvg.svg2png(url=os.path.join(root, file),
+                                 write_to=os.path.join(objsdir, file.replace('svg', 'png')),
+                                 dpi=dpi)

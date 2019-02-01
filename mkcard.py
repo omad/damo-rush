@@ -74,7 +74,7 @@ def make_puzzle_img(elements, unit=100, limits=None):
 
     if limits is None:
         # Default limits, corresponding to standard physical game
-        limits = {1: {'min':0, 'max':0},
+        limits = {1: {'min':0, 'max':2},
                   2: {'min':1, 'max':12},
                   3: {'min':0, 'max':4}}
 
@@ -143,7 +143,7 @@ def make_front_title_card(deck, model='bridge'):
     font = ImageFont.truetype(fonts['title'], 70)
     sizex, sizey = draw.textsize(text, font=font)
 
-    dino = Image.open(os.path.join(objsdir, f'{deck}-big.png'))
+    dino = Image.open(os.path.join(objsdir, f'big{deck}.png'))
     dx = card.size[0] // 2 - dino.size[0] // 2
     dy = card.size[1] // 2 - dino.size[1] // 2 - 3 * sizey
     img_merge(card, dino, (dx, dy))
