@@ -19,3 +19,6 @@ Original graphics are designed by Freepick and are available at:
  - [Graduate](https://fonts.google.com/specimen/Graduate) for cards numbers.
  - [ZCOOL KuaiLe](https://fonts.google.com/specimen/ZCOOL+KuaiLe) for front card title.
  - [PT Sans Narrow](https://fonts.google.com/specimen/PT+Sans+Narrow) for credits.
+
+## Library
+ - Ilya Zverev for the [svg resize library](https://github.com/Zverik/svg-resize)
