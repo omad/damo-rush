@@ -62,19 +62,19 @@ if __name__ == '__main__':
     parser.add_argument('icon', type=str, help='discriminant icon for the deck')
     parser.add_argument('n', type=int, default=6, nargs='?', help='number of puzzles in the deck')
 
-    parser.add_argument('--minwall', metavar='<n>', type=int, default=0,
+    parser.add_argument('--minwall', type=int, default=0,
                         help='min number of wall (0)')
-    parser.add_argument('--maxwall', metavar='<n>', type=int, default=0,
+    parser.add_argument('--maxwall', type=int, default=0,
                         help='max number of wall (0)')
-    parser.add_argument('--mincar', metavar='<n>', type=int, default=1,
+    parser.add_argument('--mincar', type=int, default=1,
                         help='min number of car (1)')
-    parser.add_argument('--maxcar', metavar='<n>', type=int, default=12,
+    parser.add_argument('--maxcar', type=int, default=12,
                         help='max number of car (12)')
-    parser.add_argument('--mintruck', metavar='<n>', type=int, default=0,
+    parser.add_argument('--mintruck', type=int, default=0,
                         help='min number of truck (0)')
-    parser.add_argument('--maxtruck', metavar='<n>', type=int, default=4,
+    parser.add_argument('--maxtruck', type=int, default=4,
                         help='max number of truck (4)')
-    parser.add_argument('--step', metavar='<n>', type=int, default=1,
+    parser.add_argument('--step', type=int, default=1,
                         help='take one puzzle each step (for increasing difficulty)')
     args = parser.parse_args()
 
