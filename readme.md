@@ -45,7 +45,7 @@ $ ./mkdeck.py 30 1114 elasmosaurus 4
  - `icon` represent the svg file that will be used to identified the deck. Two files are required
    - `icon.svg`, a svg of 1/3 x 1/3 inch page properties
    - `icon-big.svg`, a svg of 2 x 2 inch page properties
-   - ['stegosaurus', 'parasaurolophus', 'elasmosaurus'] are the provided available preset.
+   - ['stegosaurus', 'parasaurolophus', 'elasmosaurus', 'brontosaurus', 'ichthyosaurus'] are the provided available preset.
  - `n` is the number of puzzle produced.
 
 Result of the above command:
