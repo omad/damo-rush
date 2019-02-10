@@ -19,13 +19,12 @@ def generate_title_card(icon, deck_parameter):
     print(f'[Card] {icon} back generated')
 
 
-def generate_deck(nb_move, index_move, icon, n, limits):
+def generate_deck(nb_move, index_move, icon, n, limits, step):
     assert nb_move <= 60
     shutil.rmtree('generated', ignore_errors=True)
     os.makedirs('generated')
 
-    deck_parameter_str = f'({nb_move},{index_move}),{n},{limits}'.replace(' ', '')
-    print(deck_parameter_str)
+    deck_parameter_str = f'({nb_move},{index_move}),{n}:{step},{limits}'.replace(' ', '')
     generate_title_card(icon, deck_parameter_str)
 
     puzzles = load_db('rush.txt')
@@ -50,9 +49,9 @@ def generate_deck(nb_move, index_move, icon, n, limits):
         card.save(os.path.join('generated', f'{icon}-{parity}-{n + 1:0{len_n}d}.png'), 'PNG')
         print(f'[Card] {icon} {n + 1} generated ({puzzle.nb_move}, {puzzle.index}/{puzzle.over})')
 
-        i += 1
+        i += step
 
-    print(f'[Info] use {puzzles[i].nb_move, puzzles[i].index} to generate the continuing deck')
+    print(f'[Info] use level, index = {puzzles[i].nb_move, puzzles[i].index} to generate the continuing deck')
 
 
 if __name__ == '__main__':
@@ -75,6 +74,8 @@ if __name__ == '__main__':
                         help='min number of truck (0)')
     parser.add_argument('--maxtruck', metavar='<n>', type=int, default=4,
                         help='max number of truck (4)')
+    parser.add_argument('--step', metavar='<n>', type=int, default=1,
+                        help='take one puzzle each step (for increasing difficulty)')
     args = parser.parse_args()
 
     args.maxwall = max(args.maxwall, 2)
@@ -85,5 +86,5 @@ if __name__ == '__main__':
               2: {'min': args.mincar, 'max': args.maxcar},
               3: {'min': args.mintruck, 'max': args.maxtruck}}
 
-    print(f'creating deck with constraint: {limits}')
-    generate_deck(args.level, args.index, args.icon, args.n, limits)
+    print(f'creating deck with {args.step}-step and constraint: {limits}')
+    generate_deck(args.level, args.index, args.icon, args.n, limits, args.step)
