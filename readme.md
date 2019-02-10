@@ -26,6 +26,11 @@ You can specify a difficulty by chosing a number of move required (must be <= 60
 $ ./mkcard.py --level 42
 ```
 
+You can also save the generated card instead of showing it with:
+```sh
+$ ./mkcard.py --save
+```
+
 ![card output](example/standalone_example.png "standalone output")
 
 ## Deck generation
@@ -40,7 +45,7 @@ $ ./mkdeck.py 30 1114 elasmosaurus 4
  - `icon` represent the svg file that will be used to identified the deck. Two files are required
    - `icon.svg`, a svg of 1/3 x 1/3 inch page properties
    - `icon-big.svg`, a svg of 2 x 2 inch page properties
-   - ['stegosaurus', 'parasaurolophus', 'elasmosaurus'] are the provided available preset.
+   - ['stegosaurus', 'parasaurolophus', 'elasmosaurus', 'brontosaurus', 'ichthyosaurus'] are the provided available preset.
  - `n` is the number of puzzle produced.
 
 Result of the above command:
@@ -55,12 +60,15 @@ Result of the above command:
 ### Customized constraint
 When generating a deck, puzzle are checked to be playable with a normal physical game (i.e. maximum 0 wall, 12 car, 4 truck).
 
-Those {min,max}×{wall,car,truck} value can be tweak. For example
+Those {min, max}×{wall, car, truck} value can be tweak. For example
  - if you bought the limo extension, use `--mintruck 5 --maxtruck 5` to generate a specific deck with 5 truck for every puzzle.
- - if you handcraft 2 bariers (which I recommend as it is quite easy and open quite a lot of puzzle from the database), use `--maxwall 2` to generate deck with 0 up to 2 wall per puzzle.
+ - you can ask how much puzzle will be skiped between two card if you want a deck with a spread difficulty (might need to be high) with `--step 500`
+ - if you handcraft 2 bariers like the photo below (which I recommend as it is quite easy and 'unlock' a lot of puzzles from the database), use `--maxwall 2` to generate deck with 0 up to 2 wall per puzzle.
+
+![diy barrier](example/barrier.jpg "diy barrier")
 
 ## Printed result
-I ordered 3 printd decks of 36 cards (which makes 35 cards * 2 puzzle plus a 'readme' card) on [printerstudio](https://www.printerstudio.com) using the 'bridge' size card.
+I printed 3 decks of 36 cards (which makes 35 cards * 2 puzzle plus a 'readme' card) on [printerstudio](https://www.printerstudio.com) using the 'bridge' size card.
 I printed the puzzle from the top of the database (most number of move needed to solve) with the following parameters:
 ```sh
 ./mkdeck.py 60 1 stegosaurus 70 --maxwall 2
@@ -72,7 +80,7 @@ For a total of 210 quite hard problem !!
 
 I bet this is way too much and I won't have them all solved for maybe years, but I wanted enough decks to have my own custom collection.
 
-~reception and thus photo here in a few week~
+![printed result](example/printed_result.jpg "printed result")
 
 # Limitation known
 The size of the input svg in the repo and some constant in the code are specificaly chosen and hardcoded, as the generated image will be printed on a specific sized card.
@@ -81,7 +89,7 @@ I didn't reuse/code a solver as I feel that having the solution printed on the 
 
 The puzzle who require more than 12 car (rare) or more than 4 truck (I haven't looked if it is even possible in the database) are dismissed as they are not playable with the physical game.
 
-The database, and thus, the puzzles generated can contains up to two 'wall' cells: a 1x1 blocker that cannot move. Those are not dismissed as that would trim a lot of interresting puzzle and I think they are quite easy to DIY...
+The database, and thus, the puzzles generated can contains up to two 'walls' cells: a 1x1 blocker that cannot move.
 
 # Credits
 See dedicated file [here](credits.md).
