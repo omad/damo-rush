@@ -1,28 +1,39 @@
 from collections import Counter, defaultdict
-import sqlite3
 import json
 import os
+import sqlite3
+
+import click
+from flask import current_app, g
+from flask.cli import with_appcontext
 
 
-def get_elements(grid):
-    elements = defaultdict(list)
-    nb_wall = 0
-    for i, c in enumerate(grid):
-        if c != "o":
-            if c == "x":
-                nb_wall += 1
-                c = "x" + str(nb_wall)
-            elements[c].append(i)
-    return elements
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(
+            current_app.config['DATABASE'],
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        g.db.row_factory = sqlite3.Row
+
+    return g.db
 
 
-def create_db(grid_txt_file, db_file):
-    if os.path.exists(db_file):
+def close_db(e=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+
+def init_db():
+    grid_txt_file = '../cli/rush.txt'
+
+    if os.path.exists(current_app.config['DATABASE']):
         return
         # os.remove(db_file) # used for debug
 
-    print(f"[DB] Creating database {db_file} from grid file {grid_txt_file}")
-    conn = sqlite3.connect(db_file)
+    print(f"[DB] Creating database {current_app.config['DATABASE']} from grid file {grid_txt_file}")
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
         """
@@ -39,6 +50,17 @@ def create_db(grid_txt_file, db_file):
         )"""
     )
     conn.commit()
+
+    def get_elements(grid):
+        elements = defaultdict(list)
+        nb_wall = 0
+        for i, c in enumerate(grid):
+            if c != "o":
+                if c == "x":
+                    nb_wall += 1
+                    c = "x" + str(nb_wall)
+                elements[c].append(i)
+        return elements
 
     current_move = 0
     current_index = 0
@@ -113,5 +135,14 @@ def create_db(grid_txt_file, db_file):
     conn.close()
 
 
-if __name__ == "__main__":
-    create_db("../cli/rush.txt", "rush.db")
+@click.command('init-db')
+@with_appcontext
+def init_db_command():
+    """Clear the existing data and create new tables."""
+    init_db()
+    click.echo('Initialized the database.')
+
+
+def init_app(app):
+    app.teardown_appcontext(close_db)
+    app.cli.add_command(init_db_command)
