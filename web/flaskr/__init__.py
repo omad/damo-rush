@@ -2,16 +2,13 @@ import os
 
 from flask import Flask
 from . import db
-from .generator import generate_deck
-
 
 
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'rush.db'),
+        SECRET_KEY="dev", DATABASE=os.path.join(app.instance_path, "rush.db")
     )
 
     db.init_app(app)
@@ -24,24 +21,23 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        #app.config.from_pyfile('config.py', silent=False)
+        # app.config.from_pyfile('config.py', silent=False)
         pass
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
-
     # a simple page that says hello
-    @app.route('/')
+    @app.route("/")
     def homepage():
         return '<a href="/hello">hello</a>'
 
-    @app.route('/hello')
+    @app.route("/hello")
     def hello():
-        return 'Hello, World!'
+        return "Hello, World!"
 
-    @app.route('/build')
-    def build_deck():
-        generate_deck()
+    from .generator import generator as generator_blueprint
+
+    app.register_blueprint(generator_blueprint, url_prefix="/gen")
 
     return app
