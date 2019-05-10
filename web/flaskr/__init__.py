@@ -1,8 +1,8 @@
 import os
 
 from flask import Flask
-from mkdb import create_db
 from . import db
+from .generator import generate_deck
 
 
 
@@ -39,5 +39,9 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+
+    @app.route('/build')
+    def build_deck():
+        generate_deck()
 
     return app
