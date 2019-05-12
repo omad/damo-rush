@@ -1,0 +1,9 @@
+server {
+  listen 80;
+  server_name lagalenebleue.fr;
+
+  location / {
+    include uwsgi_params;
+    uwsgi_pass unix:/tmp/dino.sock;
+  }
+}
