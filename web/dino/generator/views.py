@@ -1,4 +1,4 @@
-from flaskr.db import get_db
+from dino.db import get_db
 import sqlite3
 from flask import (
     Blueprint,
@@ -8,6 +8,8 @@ from flask import (
     request,
     url_for,
     current_app,
+    jsonify,
+    send_from_directory,
 )
 
 import random
@@ -56,7 +58,7 @@ class ExportingThread(threading.Thread):
             """
 
 
-@generator.route("/build")
+@generator.route("api/new_deck")
 def build_deck():
     # FIXME takes limits from the url
     global exporting_threads
@@ -78,13 +80,19 @@ def build_deck():
         },
     )
     exporting_threads[thread_id].start()
-    return f'task id: #<a href="progress/{thread_id}">{thread_id}</a>'
+    return jsonify({"id": thread_id, "progress": 0})
 
 
-@generator.route("/progress/<int:thread_id>")
-def progress(thread_id):
+@generator.route("/")
+def test():
+    return send_from_directory("templates", "build.html")
+
+
+@generator.route("api/status/<int:deck_id>")
+def progress(deck_id):
     global exporting_threads
-    return str(exporting_threads[thread_id].progress)
+    print(deck_id)
+    return jsonify({"id": deck_id, "progress": exporting_threads[deck_id].progress})
 
 
 def generate_card(row, deck, current_pos):

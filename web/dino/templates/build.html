@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+    <title>Dino-rush deck generator</title>
+
+    <!-- Required Stylesheets -->
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+
+    <!-- Required scripts -->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  </head>
+  <body>
+    <div id="app">
+      <button v-on:click="gen_deck">Gen a deck</button>
+      <p>deck to process: {{deck.id}} {{deck.progress}}</p>
+    </div>
+    <script>
+      new Vue({
+              el: '#app',
+              data () {
+                return {
+                  deck: {
+                    id:null,
+                    progress:null
+                  },
+                }
+              },
+              methods: {
+                gen_deck: function (event) {
+                  axios
+                    .get('/gen/api/new_deck')
+                    .then(response => {
+                      this.deck = response.data
+
+                      // we need to keep context, setinterval is executed without Vue context
+                      var self = this;
+                      this.refresh_progress = setInterval(function(){
+                        axios
+                          .get('/gen/api/status/'.concat(self.deck.id))
+                          .then(response => (self.deck = response.data));
+                        if (self.deck.progress === 100) {
+                          clearInterval(self.refresh_progress);
+                        }
+                      }, 1000);
+                    });
+                },
+              }
+      })
+    </script>
+  </body>
+</html>
