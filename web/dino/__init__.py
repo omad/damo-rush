@@ -32,10 +32,6 @@ def create_app(test_config=None):
     def homepage():
         return render_template("index.html")
 
-    @app.route("/hello")
-    def hello():
-        return "Hello, World!"
-
     from .generator import generator as generator_blueprint
 
     app.register_blueprint(generator_blueprint, url_prefix="/gen")
