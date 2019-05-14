@@ -1,61 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+{% extends 'base.html' %}
 
-    <title>Dino-rush deck generator</title>
+{% block content %}
+<div>
+  <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
+    <h6 slot="header" class="mb-0">Generate a new deck</h6>
+    <b-button href="#" v-on:click="gen_deck">Go !</b-button>
+    <b-card-text>deck to process: {{deck.id}} {{deck.progress}}</b-card-text>
+    <b-progress
+      :value="deck.progress"
+      :max="100"
+      :striped="deck.step === 'tar'"
+      :animated="deck.step === 'tar'"
+      v-bind:variant="getBarColor(deck.step)"
+      ></b-progress>
+  </b-card>
+</div>
+{% endblock %}
 
-    <!-- Required Stylesheets -->
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
 
-    <!-- Required scripts -->
-    <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-  </head>
-  <body>
-    <div id="app">
-      <button v-on:click="gen_deck">Gen a deck</button>
-      <p>deck to process: {{deck.id}} {{deck.progress}}</p>
-    </div>
-    <script>
-      new Vue({
-              el: '#app',
-              data () {
-                return {
-                  deck: {
-                    id:null,
-                    progress:null
-                  },
-                }
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+          data () {
+            return {
+              deck: {
+                id:null,
+                progress:null
               },
-              methods: {
-                gen_deck: function (event) {
-                  axios
-                    .get('/gen/api/new_deck')
-                    .then(response => {
-                      this.deck = response.data
+            }
+          },
+          methods: {
+            gen_deck: function (event) {
+              axios
+                .get('/gen/api/new_deck')
+                .then(response => {
+                  this.deck = response.data
 
-                      // we need to keep context, setinterval is executed without Vue context
-                      var self = this;
-                      this.refresh_progress = setInterval(function(){
-                        axios
-                          .get('/gen/api/status/'.concat(self.deck.id))
-                          .then(response => (self.deck = response.data));
-                        if (self.deck.progress === 100) {
-                          clearInterval(self.refresh_progress);
-                        }
-                      }, 1000);
-                    });
-                },
+                  // we need to keep context, setinterval is executed without Vue context
+                  var self = this;
+                  this.refresh_progress = setInterval(function(){
+                    axios
+                      .get('/gen/api/status/'.concat(self.deck.id))
+                      .then(response => (self.deck = response.data));
+                    if (self.deck.step === 'done') {
+                      clearInterval(self.refresh_progress);
+                    }
+                  }, 1000);
+                });
+            },
+            getBarColor(step){
+              if (this.deck.step === "done"){
+                return "success";
               }
-      })
-    </script>
-  </body>
-</html>
+              return "primary";
+            }
+          }
+  })
+</script>
+{% endblock %}

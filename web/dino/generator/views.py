@@ -45,7 +45,6 @@ class ExportingThread(threading.Thread):
             )
 
             self.progress = 100 * i // (self.args["n"] - 1)
-            print(self.progress)
 
             """
             parity = 'odd' if n % 2 else 'even'
@@ -58,9 +57,13 @@ class ExportingThread(threading.Thread):
             print(f'[Card] {icon} {n + 1} generated ({puzzle.nb_move}, {puzzle.index}/{puzzle.over})')
             """
         self.step = "tar"
-
+        time.sleep(7)
         self.step = "done"
 
+
+@generator.route("/")
+def test():
+    return render_template("build.html")
 
 
 @generator.route("api/new_deck")
@@ -88,21 +91,15 @@ def build_deck():
     return jsonify({"id": thread_id, "step": "mkcards", "progress": 0})
 
 
-@generator.route("/")
-def test():
-    return send_from_directory("templates", "build.html")
-
-
 @generator.route("api/status/<int:deck_id>")
 def progress(deck_id):
     global running_processes
-    print(deck_id)
     if deck_id not in running_processes:
         # check if present in file
         return jsonify(
             {
                 "id": deck_id,
-                "step": "missing"
+                "step": "missing",
                 "progress": running_processes[deck_id].progress,
             }
         )
