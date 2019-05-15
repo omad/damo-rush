@@ -17,6 +17,8 @@ import random
 import threading
 import time
 
+from dino.generator import cards
+
 
 generator = Blueprint("generator", __name__)
 running_processes = {}
@@ -39,14 +41,15 @@ class ExportingThread(threading.Thread):
         parity = True
         self.step = "mkcards"
         for i, row in enumerate(self.rows):
+            print(tuple(row))
             res += str(tuple(row)) + "<br>"
-
-            card = generate_card(
-                row, deck=self.args["icon"], current_pos=(i, self.args["n"])
+            card = cards.generate_puzzle_card(
+                row,
+                {"icon": self.args["icon"], "text": f"{i+1:0{len(str(self.args['n']))}d}"},
             )
 
             self.progress = 100 * i // (self.args["n"] - 1)
-            print(os.path.abspath('.')) # dino-rush/web
+            print(os.path.abspath("."))  # dino-rush/web
 
             """
             parity = 'odd' if n % 2 else 'even'
@@ -113,8 +116,3 @@ def progress(deck_id):
             "progress": running_processes[deck_id].progress,
         }
     )
-
-
-def generate_card(row, deck, current_pos):
-    time.sleep(1)
-    return None
