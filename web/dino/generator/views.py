@@ -12,6 +12,7 @@ from flask import (
     send_from_directory,
 )
 
+import os
 import random
 import threading
 import time
@@ -45,6 +46,7 @@ class ExportingThread(threading.Thread):
             )
 
             self.progress = 100 * i // (self.args["n"] - 1)
+            print(os.path.abspath('.')) # dino-rush/web
 
             """
             parity = 'odd' if n % 2 else 'even'
@@ -56,7 +58,7 @@ class ExportingThread(threading.Thread):
             parity ^= True
             print(f'[Card] {icon} {n + 1} generated ({puzzle.nb_move}, {puzzle.index}/{puzzle.over})')
             """
-        self.step = "tar"
+        self.step = "zip"
         time.sleep(7)
         self.step = "done"
 

@@ -9,8 +9,8 @@
     <b-progress
       :value="deck.progress"
       :max="100"
-      :striped="deck.step === 'tar'"
-      :animated="deck.step === 'tar'"
+      :striped="deck.step === 'zip'"
+      :animated="deck.step === 'zip'"
       v-bind:variant="getBarColor(deck.step)"
       ></b-progress>
   </b-card>

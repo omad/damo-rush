@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template
-from . import db
+from . import db, graphics
 
 
 class CustomFlask(Flask):
@@ -18,6 +18,7 @@ def create_app(test_config=None):
     )
 
     db.init_app(app)
+    graphics.init_app(app)
 
     # Ensure the instance folder exists
     try:
