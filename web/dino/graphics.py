@@ -26,7 +26,7 @@ def generate_car_color(in_path, out_path, color_name, color_value, dpi):
     fin.close()
 
 
-def generate_icon_size(root, file, out_path, size, dpi, prefix=""):
+def generate_icon_size(root, file, out_path, dpi, size, prefix=""):
     filename = f"{prefix}{file}"
     svg_resize(
         {
@@ -41,6 +41,7 @@ def generate_icon_size(root, file, out_path, size, dpi, prefix=""):
         write_to=os.path.join(out_path, filename.replace("svg", "png")),
         dpi=dpi,
     )
+
 
 def get_colors():
     return {
@@ -59,15 +60,10 @@ def get_colors():
         "red": ("ef2d32", "b22922"),
     }
 
+
 def mk_graphics(assetdir, objsdir, dpi):
     # (clear, dark) colors code for some preset
     colors = get_colors()
-
-    fonts = {
-        "title": os.path.join(assetdir, "font", "ZCOOLKuaiLe-Regular.ttf"),
-        "credits": os.path.join(assetdir, "font", "PT_Sans-Narrow-Web-Regular.ttf"),
-        "numbers": os.path.join(assetdir, "font", "Graduate-Regular.ttf"),
-    }
 
     print(f"[CLEAN] {objsdir}")
     shutil.rmtree(objsdir, ignore_errors=True)

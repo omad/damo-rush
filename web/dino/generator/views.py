@@ -1,5 +1,5 @@
 import os
-import shutils
+import shutil
 import sqlite3
 import random
 import threading
@@ -60,6 +60,26 @@ class ExportingThread(threading.Thread):
             os.makedirs(cards_dir)
 
         with ZipFile(deck_path, "w") as myzip:
+            # front title card
+            card = cards.generate_front_title_card(self.args["icon"])
+            card_filename = "front.png"
+            card_filepath = os.path.join(cards_dir, card_filename)
+            card_arcname = os.path.join(
+                "recto", f"{0:0{len(str(1 + self.args['n'] // 2))}d}.png"
+            )
+            card.save(card_filepath, "PNG")
+            myzip.write(card_filepath, arcname=card_arcname)
+
+            # back title card
+            card = cards.generate_back_title_card()
+            card_filename = "back.png"
+            card_filepath = os.path.join(cards_dir, card_filename)
+            card_arcname = os.path.join(
+                "verso", f"{0:0{len(str(1 + self.args['n'] // 2))}d}.png"
+            )
+            card.save(card_filepath, "PNG")
+            myzip.write(card_filepath, arcname=card_arcname)
+
             for i, row in enumerate(self.rows):
                 side = "verso" if i % 2 else "recto"
                 card_filename = f"{i + 1}.png"
@@ -68,22 +88,21 @@ class ExportingThread(threading.Thread):
                 )
 
                 card_filepath = os.path.join(cards_dir, card_filename)
+                deck_info = {
+                    "icon": self.args["icon"],
+                    "text": f"{i+1:0{len(str(self.args['n']))}d}",
+                }
 
-                card = cards.generate_puzzle_card(
-                    row,
-                    {
-                        "icon": self.args["icon"],
-                        "text": f"{i+1:0{len(str(self.args['n']))}d}",
-                    },
-                )
+                card = cards.generate_puzzle_card(row, deck_info)
                 card.save(card_filepath, "PNG")
                 myzip.write(card_filepath, arcname=card_arcname)
 
                 print(
                     f"[Card] {self.args['icon']} {i + 1} generated ({row['nb_move']}, {row['index_']}/{row['index_max']})"
                 )
+                print(i, deck_info, card_arcname, card_filename)
                 self.progress = 100 * i // (self.args["n"] - 1)
-            self.step = "zip" # FIXME useless
+            self.step = "zip"  # FIXME useless
         shutil.rmtree(cards_dir)
         self.step = "done"
 
@@ -119,7 +138,7 @@ def build_deck():
     return jsonify({"id": deck_id, "step": "mkcards", "progress": 0})
 
 
-@generator.route("api/status/<int:deck_id>")
+@generator.route("api/status/<string:deck_id>")
 def progress(deck_id):
     global running_processes
     if deck_id not in running_processes:
