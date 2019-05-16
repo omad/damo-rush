@@ -1,22 +1,9 @@
 import os
 import shutil
-import sqlite3
-import random
 import threading
-import time
 from zipfile import ZipFile
 
-from flask import (
-    Blueprint,
-    flash,
-    redirect,
-    render_template,
-    request,
-    url_for,
-    current_app,
-    jsonify,
-    send_from_directory,
-)
+from flask import Blueprint, render_template, request, jsonify, send_from_directory
 
 from dino.generator import cards
 from dino.db import get_db
@@ -27,7 +14,10 @@ running_processes = {}
 
 
 def deck_id_from_args(args):
-    return f"{args['icon']}-{args['nb_move']}-{args['index_move']}-{args['n']}-{args['step']}-{args['limits']}"
+    return (
+        f"{args['icon']}-{args['nb_move']}-{args['index_move']}-"
+        f"{args['n']}-{args['step']}-{args['limits']}"
+    )
 
 
 class ExportingThread(threading.Thread):
@@ -51,7 +41,6 @@ class ExportingThread(threading.Thread):
         # TODO delete oldest zip if total space taken too high
 
         # TODO generate_title_card(icon, deck_parameter_str)
-        res = ""
         self.step = "mkcards"
 
         cards_dir = os.path.join("deck_output", str(self.args["deck_id"]))
@@ -98,9 +87,9 @@ class ExportingThread(threading.Thread):
                 myzip.write(card_filepath, arcname=card_arcname)
 
                 print(
-                    f"[Card] {self.args['icon']} {i + 1} generated ({row['nb_move']}, {row['index_']}/{row['index_max']})"
+                    f"[Card] {self.args['icon']} {i + 1} generated "
+                    f"({row['nb_move']}, {row['index_']}/{row['index_max']})"
                 )
-                print(i, deck_info, card_arcname, card_filename)
                 self.progress = 100 * i // (self.args["n"] - 1)
             self.step = "zip"  # FIXME useless
         shutil.rmtree(cards_dir)

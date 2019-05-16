@@ -1,15 +1,10 @@
-from collections import Counter, defaultdict
-import json
 import os
-import sqlite3
-
 import click
-from flask import current_app, g
-from flask.cli import with_appcontext
-
-import os
 import shutil
 import cairosvg
+
+from flask.cli import with_appcontext
+
 from .svg_resize import process_stream as svg_resize
 
 

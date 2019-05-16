@@ -1,9 +1,7 @@
 import time
 import json
 import os.path
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
+from PIL import Image, ImageFont, ImageDraw
 from random import shuffle, randrange
 import qrcode
 
@@ -33,7 +31,7 @@ def _make_puzzle_img(elements, unit=100):
         for y in range(1, 6):
 
             draw.ellipse(
-                (x * 100 - c, y * 100 - c, x * 100 + c, y * 100 + c),
+                (x * unit - c, y * unit - c, x * unit + c, y * unit + c),
                 fill="grey",
                 outline="grey",
             )
@@ -119,11 +117,8 @@ def _get_base_card(rotate=False):
     return Image.new("RGBA", use_template["bleed"]), safe_offset
 
 
-def generate_puzzle_card(puzzle, deck_data=None):
-    unit = 100  # dpi of a cell of the puzzle
-
+def generate_puzzle_card(puzzle, deck_data=None, unit=100):
     card, safe_offset = _get_base_card()
-
     puzzle_img = _make_puzzle_img(json.loads(puzzle["elements"]), unit)
 
     # Center the puzzle on the card
@@ -163,7 +158,6 @@ def generate_puzzle_card(puzzle, deck_data=None):
         font = ImageFont.truetype(
             os.path.join("graphics", "font", "Graduate-Regular.ttf"), unit // 2
         )
-        print(deck_data)
         text = deck_data["text"]
         n_sizex, n_sizey = draw.textsize(text, font=font)
         nx = card.size[0] // 2 + unit // 10
