@@ -1,5 +1,11 @@
-from dino.db import get_db
+import os
+import shutils
 import sqlite3
+import random
+import threading
+import time
+from zipfile import ZipFile
+
 from flask import (
     Blueprint,
     flash,
@@ -12,16 +18,16 @@ from flask import (
     send_from_directory,
 )
 
-import os
-import random
-import threading
-import time
-
 from dino.generator import cards
+from dino.db import get_db
 
 
 generator = Blueprint("generator", __name__)
 running_processes = {}
+
+
+def deck_id_from_args(args):
+    return f"{args['icon']}-{args['nb_move']}-{args['index_move']}-{args['n']}-{args['step']}-{args['limits']}"
 
 
 class ExportingThread(threading.Thread):
@@ -33,36 +39,52 @@ class ExportingThread(threading.Thread):
         self.step = None
 
     def run(self):
-        # shutil.rmtree('generated', ignore_errors=True)
-        # os.makedirs('generated')
+        if not os.path.exists("deck_output"):
+            os.makedirs("deck_output")
 
-        # generate_title_card(icon, deck_parameter_str)
+        deck_path = os.path.join("deck_output", f"{self.args['deck_id']}.zip")
+        if os.path.exists(deck_path):
+            self.progress = 100
+            self.step = "done"
+            return
+
+        # TODO delete oldest zip if total space taken too high
+
+        # TODO generate_title_card(icon, deck_parameter_str)
         res = ""
-        parity = True
         self.step = "mkcards"
-        for i, row in enumerate(self.rows):
-            print(tuple(row))
-            res += str(tuple(row)) + "<br>"
-            card = cards.generate_puzzle_card(
-                row,
-                {"icon": self.args["icon"], "text": f"{i+1:0{len(str(self.args['n']))}d}"},
-            )
 
-            self.progress = 100 * i // (self.args["n"] - 1)
-            print(os.path.abspath("."))  # dino-rush/web
+        cards_dir = os.path.join("deck_output", str(self.args["deck_id"]))
 
-            """
-            parity = 'odd' if n % 2 else 'even'
-            card.save(
-                os.path.join('generated',
-                f"{icon}-{['odd', 'even']parity}-{n + 1:0{len_n}d}.png"),
-                'PNG'
-            )
-            parity ^= True
-            print(f'[Card] {icon} {n + 1} generated ({puzzle.nb_move}, {puzzle.index}/{puzzle.over})')
-            """
-        self.step = "zip"
-        time.sleep(7)
+        if not os.path.exists(cards_dir):
+            os.makedirs(cards_dir)
+
+        with ZipFile(deck_path, "w") as myzip:
+            for i, row in enumerate(self.rows):
+                side = "verso" if i % 2 else "recto"
+                card_filename = f"{i + 1}.png"
+                card_arcname = os.path.join(
+                    side, f"{1 + i // 2:0{len(str(1 + self.args['n'] // 2))}d}.png"
+                )
+
+                card_filepath = os.path.join(cards_dir, card_filename)
+
+                card = cards.generate_puzzle_card(
+                    row,
+                    {
+                        "icon": self.args["icon"],
+                        "text": f"{i+1:0{len(str(self.args['n']))}d}",
+                    },
+                )
+                card.save(card_filepath, "PNG")
+                myzip.write(card_filepath, arcname=card_arcname)
+
+                print(
+                    f"[Card] {self.args['icon']} {i + 1} generated ({row['nb_move']}, {row['index_']}/{row['index_max']})"
+                )
+                self.progress = 100 * i // (self.args["n"] - 1)
+            self.step = "zip" # FIXME useless
+        shutil.rmtree(cards_dir)
         self.step = "done"
 
 
@@ -76,24 +98,25 @@ def build_deck():
     # FIXME takes limits from the url
     global running_processes
 
-    thread_id = random.randint(0, 10000)
+    args = {
+        "nb_move": 50,
+        "index_move": 1,
+        "icon": "brontosaurus",
+        "n": 50,
+        "limits": None,
+        "step": 1,
+    }
+    deck_id = deck_id_from_args(args)
+    args["deck_id"] = deck_id
+
     c = get_db().cursor()
     # FIXME query to implement with correct filter
-    c.execute("SELECT * FROM games LIMIT :n", {"n": 15})
+    c.execute("SELECT * FROM games LIMIT :n", {"n": args["n"]})
+    # TODO override n with how many row were found
 
-    running_processes[thread_id] = ExportingThread(
-        c.fetchall(),
-        {
-            "nb_move": 50,
-            "index_move": 1,
-            "icon": None,
-            "n": 15,
-            "limits": None,
-            "step": 1,
-        },
-    )
-    running_processes[thread_id].start()
-    return jsonify({"id": thread_id, "step": "mkcards", "progress": 0})
+    running_processes[deck_id] = ExportingThread(c.fetchall(), args)
+    running_processes[deck_id].start()
+    return jsonify({"id": deck_id, "step": "mkcards", "progress": 0})
 
 
 @generator.route("api/status/<int:deck_id>")

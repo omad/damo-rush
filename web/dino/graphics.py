@@ -42,10 +42,8 @@ def generate_icon_size(root, file, out_path, size, dpi, prefix=""):
         dpi=dpi,
     )
 
-
-def mk_graphics(assetdir, objsdir, dpi):
-    # (clear, dark) colors code for some preset
-    colors = {
+def get_colors():
+    return {
         "green": ("55ba9a", "459397"),
         "yellow": ("f9dd27", "f8a423"),
         "blue": ("68a4dd", "5584cc"),
@@ -60,6 +58,10 @@ def mk_graphics(assetdir, objsdir, dpi):
         # 'ocre': ('e6d8a3', 'cbbc7b'),
         "red": ("ef2d32", "b22922"),
     }
+
+def mk_graphics(assetdir, objsdir, dpi):
+    # (clear, dark) colors code for some preset
+    colors = get_colors()
 
     fonts = {
         "title": os.path.join(assetdir, "font", "ZCOOLKuaiLe-Regular.ttf"),
