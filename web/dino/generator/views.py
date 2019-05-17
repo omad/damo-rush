@@ -58,6 +58,7 @@ class ExportingThread(threading.Thread):
             )
             card.save(card_filepath, "PNG")
             myzip.write(card_filepath, arcname=card_arcname)
+            self.progress = 100 * 1 // (self.args["n"] + 2)
 
             # back title card
             card = cards.generate_back_title_card()
@@ -68,6 +69,7 @@ class ExportingThread(threading.Thread):
             )
             card.save(card_filepath, "PNG")
             myzip.write(card_filepath, arcname=card_arcname)
+            self.progress = 100 * 2 // (self.args["n"] + 2)
 
             for i, row in enumerate(self.rows):
                 side = "verso" if i % 2 else "recto"
@@ -90,8 +92,7 @@ class ExportingThread(threading.Thread):
                     f"[Card] {self.args['icon']} {i + 1} generated "
                     f"({row['nb_move']}, {row['index_']}/{row['index_max']})"
                 )
-                self.progress = 100 * i // (self.args["n"] - 1)
-            self.step = "zip"  # FIXME useless
+                self.progress = 100 * (i + 3) // (self.args["n"] + 2)
         shutil.rmtree(cards_dir)
         self.step = "done"
 

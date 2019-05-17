@@ -9,8 +9,6 @@
     <b-progress
       :value="deck.progress"
       :max="100"
-      :striped="deck.step === 'zip'"
-      :animated="deck.step === 'zip'"
       v-bind:variant="getBarColor(deck.step)"
       ></b-progress>
   </b-card>
@@ -46,7 +44,7 @@
                     if (self.deck.step === 'done') {
                       clearInterval(self.refresh_progress);
                     }
-                  }, 1000);
+                  }, 500);
                 });
             },
             getBarColor(step){
