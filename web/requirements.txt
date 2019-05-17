@@ -1,0 +1,4 @@
+flask
+cairosvg
+qrcode
+pillow
