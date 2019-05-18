@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+<div>
 <h1>Credits</h1>
 <h2>Database</h2>
 The puzzle database is taken from the brilliant work of Michael Fogleman:
-[Solving Rush Hour, the Puzzle](https://www.michaelfogleman.com/rush).
+<a href="https://www.michaelfogleman.com/rush">Solving Rush Hour, the Puzzle</a>.
 He is the one that did all the hard work!
 
 <h2>raphics</h2>
@@ -26,4 +27,13 @@ Original graphics are designed by Freepick and are available at:
 <ul>
   <li>Ilya Zverev for the <li><a href="https://github.com/Zverik/svg-resize">SVG resize library</a>.</li>
 </ul>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+  })
+</script>
 {% endblock %}

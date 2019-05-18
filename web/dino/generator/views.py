@@ -102,7 +102,29 @@ def test():
     return render_template("build.html")
 
 
-@generator.route("api/new_deck")
+@generator.route("/list")
+def list_deck():
+    files = [f for f in os.listdir("deck_output") if f.endswith(".zip")]
+    print(files)
+    return render_template("list.html", files=files)
+
+
+@generator.route("/api/list")
+def api_list_deck():
+    files = [
+        {"filename": f, "url": f}
+        for f in os.listdir("deck_output")
+        if f.endswith(".zip")
+    ]
+    return jsonify(files)
+
+
+@generator.route("/dl/<path:path>")
+def dl_deck(path):
+    return send_from_directory(directory="../deck_output", filename=path)
+
+
+@generator.route("/api/new_deck")
 def build_deck():
     # FIXME takes limits from the url
     global running_processes
@@ -128,7 +150,7 @@ def build_deck():
     return jsonify({"id": deck_id, "step": "mkcards", "progress": 0})
 
 
-@generator.route("api/status/<string:deck_id>")
+@generator.route("/api/status/<string:deck_id>")
 def progress(deck_id):
     global running_processes
     if deck_id not in running_processes:

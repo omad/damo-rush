@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<b-table
+      show-empty
+      stacked="md"
+      :items="items"
+      :fields="fields"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
+      >
+
+  <template slot="filename" slot-scope="row">
+    {{row.value}}
+  </template>
+
+  <template slot="url" slot-scope="row">
+    <a v-bind:href="'/gen/dl/'.concat(row.value)">
+      <b-button size="sm">
+        Download
+      </b-button>
+    </a>
+  </template>
+</b-table>
+{% endblock %}
+
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+          data () {
+            return {
+              fields: [
+                { 
+                  key: 'filename',
+                  label: 'File name',
+                  sortable: true
+                },
+                { 
+                  key: 'url',
+                  label: 'Download link',
+                }
+              ],
+              items: [],
+              sortBy: null,
+              sortDesc: false,
+              sortDirection: 'asc',
+            }
+          },
+          mounted: function () {
+            axios
+              .get('/gen/api/list')
+              .then(response => {
+                this.items = response.data
+              });
+          }
+  })
+</script>
+{% endblock %}
