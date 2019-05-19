@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <title>Dino-rush deck generator</title>
 
-    <!-- Required Stylesheets -->
-    <!--link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" /-->
     <link type="text/css" rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cyborg/bootstrap.min.css" />
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="[[ url_for('static', filename='bootstrap-vue.css') ]]">
+    <link type="text/css" rel="stylesheet" href="[[ url_for('static', filename='bootstrap-vue.css') ]]">
+    <link rel="shortcut icon" href="[[ url_for('static', filename='favicon.png') ]]">
 
-    <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/ionicons@4.5.5/dist/ionicons.js"></script>
+
+<style>
+p {
+  font-size: 1em;
+  margin-top:10px;
+}
+</style>
 
   </head>
   <body>
     <div id="app">
-      <div>
-        <b-navbar toggleable="lg" type="dark" variant="primary">
+      <b-navbar toggleable="lg" type="dark" variant="dark" fixed="top" sticky>
+        <b-container>
           <b-navbar-brand href="/">Dino-Rush</b-navbar-brand>
 
           <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -35,9 +41,10 @@
               <b-nav-item href="/credits">Credits</b-nav-item>
             </b-navbar-nav>
           </b-collapse>
-        </b-navbar>
-      </div>
-      <b-container style="padding-top: 3em;">
+        </b-container>
+      </b-navbar>
+
+      <b-container style="padding-top: 2em;">
         {% block content %}
         {% endblock %}
       </b-container>

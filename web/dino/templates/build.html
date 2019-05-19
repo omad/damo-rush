@@ -5,7 +5,7 @@
   <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
     <h6 slot="header" class="mb-0">Generate a new deck</h6>
     <b-button href="#" v-on:click="gen_deck">Go !</b-button>
-    <b-card-text>deck to process: {{deck.id}} {{deck.progress}}</b-card-text>
+    <b-card-text>processing deck: {{deck.id}} {{deck.progress}}%</b-card-text>
     <b-progress
       :value="deck.progress"
       :max="100"
@@ -13,6 +13,15 @@
       ></b-progress>
   </b-card>
 </div>
+<p v-if="dlready">
+<a v-bind:href="'/gen/dl/'.concat(deck.id).concat('.zip')"><ion-icon style="font-size: 100px" name="cloud-download"></ion-icon></a>
+</p>
+
+<p v-if="dlready">
+The generated deck will still be available in the 'Donwload list' section for some times (The site will delete the older deck when it run out of storing space).
+</p>
+
+
 {% endblock %}
 
 
@@ -26,10 +35,12 @@
                 id:null,
                 progress:0
               },
+              dlready: false,
             }
           },
           methods: {
             gen_deck: function (event) {
+              this.dlready = false;
               axios
                 .get('/gen/api/new_deck')
                 .then(response => {
@@ -49,6 +60,7 @@
             },
             getBarColor(step){
               if (this.deck.step === "done"){
+                this.dlready = true;
                 return "success";
               }
               return "primary";

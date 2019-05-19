@@ -8,7 +8,7 @@
   </template>
 </b-jumbotron>
 
-<p style="color: #DDDDDD; font-size: 1.1em;">
+<p>
 This site let you generate files to print you own deck of puzzle. The format is especially designed so that you can order real card on specific website so that you'll end up with something like this:
 </p>
 
@@ -16,21 +16,19 @@ This site let you generate files to print you own deck of puzzle. The format is 
   <b-img src="[[ url_for('static', filename='printed_result.jpg') ]]" fluid alt="printed result"></b-img>
 </div>
 
-<p style="color: #DDDDDD; font-size: 1.1em;">
+<p>
 The database used include "all interresting puzzle". You only need to provide the number of car, truck and wall you physicaly have and a difficulty and you can generates puzzles that fit your game. 
 Additional truck can be purchase with the 'limo' extension raising the truck limit to 5. 
 The two unmovable 1x1 cells called wall/barrier can be easily diy, I made those one usin Fimo dough:
 </p>
 
 <div>
-  <b-img src="[[ url_for('static', filename='barrier.jpg') ]]" fluid alt="barrier" center=true></b-img>
+  <b-img src="[[ url_for('static', filename='barrier.jpg') ]]" fluid center alt="barrier"></b-img>
 </div>
 
-<div>
-<p style="color: #DDDDDD; font-size: 1.1em;">
+<p>
 I would recommand you to built those 2 barriers as they unlock quite a lot of puzzle, and introduce a nice diversity to the challenge.
 </p>
-</div>
 
 {% endblock %}
 
