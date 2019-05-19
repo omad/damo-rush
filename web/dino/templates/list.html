@@ -11,7 +11,7 @@
       :sort-direction="sortDirection"
       >
 
-  <template slot="filename" slot-scope="row">
+  <template slot="icon" slot-scope="row">
     {{row.value}}
   </template>
 
@@ -25,6 +25,12 @@
 </b-table>
 {% endblock %}
 
+        "icon": icon,
+        "nb_move": nb_move,
+        "index_move": index_move,
+        "n": n,
+        "step": step,
+        "url": filename,
 
 {% block footer_js %}
 <script>
@@ -34,8 +40,28 @@
             return {
               fields: [
                 { 
-                  key: 'filename',
-                  label: 'File name',
+                  key: 'icon',
+                  label: 'Deck icon',
+                  sortable: true
+                },
+                { 
+                  key: 'nb_move',
+                  label: 'Starting nb move',
+                  sortable: true
+                },
+                { 
+                  key: 'index_move',
+                  label: 'Index',
+                  sortable: true
+                },
+                { 
+                  key: 'n',
+                  label: 'Number of puzzle',
+                  sortable: true
+                },
+                { 
+                  key: 'step',
+                  label: 'Step',
                   sortable: true
                 },
                 { 

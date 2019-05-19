@@ -13,11 +13,23 @@ generator = Blueprint("generator", __name__)
 running_processes = {}
 
 
-def deck_id_from_args(args):
+def _deck_id_from_args(args):
     return (
         f"{args['icon']}-{args['nb_move']}-{args['index_move']}-"
         f"{args['n']}-{args['step']}-{args['limits']}"
     )
+
+
+def _get_list_info(filename):
+    icon, nb_move, index_move, n, step, *limits = filename.split("-")
+    return {
+        "icon": icon,
+        "nb_move": nb_move,
+        "index_move": index_move,
+        "n": n,
+        "step": step,
+        "url": filename,
+    }
 
 
 class ExportingThread(threading.Thread):
@@ -111,11 +123,7 @@ def list_deck():
 
 @generator.route("/api/list")
 def api_list_deck():
-    files = [
-        {"filename": f, "url": f}
-        for f in os.listdir("deck_output")
-        if f.endswith(".zip")
-    ]
+    files = [_get_list_info(f) for f in os.listdir("deck_output") if f.endswith(".zip")]
     return jsonify(files)
 
 
@@ -137,7 +145,7 @@ def build_deck():
         "limits": None,
         "step": 1,
     }
-    deck_id = deck_id_from_args(args)
+    deck_id = _deck_id_from_args(args)
     args["deck_id"] = deck_id
 
     c = get_db().cursor()
