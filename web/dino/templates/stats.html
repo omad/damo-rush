@@ -1,16 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<b-alert variant="success" show>Total download : {{total}} </b-alert>
+<p class="text-success">Total download : {{total}} </p>
 
 <b-table
       show-empty
       stacked="md"
       :items="items"
       :fields="fields"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
       >
 
 </b-table>
@@ -36,9 +33,6 @@
               ],
               items: [],
               total: 0,
-              sortBy: null,
-              sortDesc: false,
-              sortDirection: 'asc',
             }
           },
           mounted: function () {

@@ -6,9 +6,6 @@
       stacked="md"
       :items="items"
       :fields="fields"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
       >
 
   <template slot="icon" slot-scope="row">
@@ -91,9 +88,6 @@
                 }
               ],
               items: [],
-              sortBy: null,
-              sortDesc: false,
-              sortDirection: 'asc',
             }
           },
           mounted: function () {
