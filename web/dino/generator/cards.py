@@ -9,6 +9,7 @@ from dino.graphics import get_colors
 
 def _img_merge(bg_img, fg_img, coord=(0, 0)):
     # inspire by https://stackoverflow.com/a/53663233
+    # merge top left corner of fg_img at coord
     fg_img_trans = Image.new("RGBA", fg_img.size)
     fg_img_trans = Image.blend(fg_img_trans, fg_img, 1)
     bg_img.paste(fg_img_trans, coord, fg_img_trans)
@@ -225,5 +226,63 @@ def generate_back_title_card():
     qry = (card.size[1] - qr_img.size[1]) // 2
 
     _img_merge(card, qr_img, (qrx, qry))
+
+    return card
+
+
+def _add_number_column(start_x, start_y, n_start, n_end):
+    card, (safe_x, safe_y) = _get_base_card()
+    draw = ImageDraw.Draw(card)
+    font = ImageFont.truetype(
+        os.path.join("graphics", "font", "ZCOOLKuaiLe-Regular.ttf"), 50
+    )
+
+    base_x, base_y = draw.textsize("MM", font=font)
+    base_size_x = base_x + 2 * base_y
+    spacer_x = (card.size[0] - 3 * base_size_x - 2 * safe_x) // 2
+    current_x = start_x
+    i = n_start
+    for col in range(3):
+        current_y = start_y
+        while current_y + base_y < card.size[1] - safe_y:
+            text = f"{i:02}"
+
+            draw.rectangle(
+                [current_x, current_y, current_x + base_y, current_y + base_y],
+                None,
+                (0, 0, 0),
+            )
+
+            draw.text(
+                (current_x + base_y + base_y // 2, current_y),
+                text,
+                (0, 0, 0),
+                font=font,
+            )
+            current_y += base_y + base_y // 2
+            i += 1
+            if i > n_end:
+                break
+        if i > n_end:
+            break
+        current_x += spacer_x + base_size_x
+    return card, draw, i
+
+
+def generate_front_score_card(icon_name, n_start=1, n_last=84):
+    _, (safe_x, safe_y) = _get_base_card()
+    dino = Image.open(os.path.join("graphics", "generated", f"{icon_name}.png"))
+    card, draw, n_next = _add_number_column(
+        safe_x, safe_y + dino.size[1] + 8, n_start, n_last
+    )
+
+    _img_merge(card, dino, (safe_x, safe_y))
+
+    return card, n_next
+
+
+def generate_back_score_card(icon_name, n_next, n_last=84):
+    _, (safe_x, safe_y) = _get_base_card()
+    card, draw, _ = _add_number_column(safe_x, safe_y, n_next, n_last)
 
     return card

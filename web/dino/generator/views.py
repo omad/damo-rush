@@ -117,12 +117,34 @@ class ExportingThread(threading.Thread):
                     f"({row['nb_move']}, {row['index_']}/{row['index_max']})"
                 )
                 self.progress = 100 * (i + 3) // (self.args["n"] + 2)
+
+            card, n_next = cards.generate_front_score_card(
+                self.args["icon"], 1, self.args["n"]
+            )
+            card_filename = "score_front.png"
+            card_filepath = os.path.join(cards_dir, card_filename)
+            card.save(card_filepath, "PNG")
+            card_arcname = os.path.join("recto", f"99.png")
+            myzip.write(card_filepath, arcname=card_arcname)
+
+            if n_next != self.args["n"]:
+                card = cards.generate_back_score_card(
+                    self.args["icon"], n_next, self.args["n"]
+                )
+            else:
+                card = cards.generate_front_title_card(self.args["icon"])
+            card_filename = "score_back.png"
+            card_filepath = os.path.join(cards_dir, card_filename)
+            card.save(card_filepath, "PNG")
+            card_arcname = os.path.join("verso", f"99.png")
+            myzip.write(card_filepath, arcname=card_arcname)
+
         shutil.rmtree(cards_dir)
         self.step = "done"
 
 
 @generator.route("/")
-def test():
+def build():
     return render_template("build.html")
 
 
@@ -198,3 +220,13 @@ def progress(deck_id):
             "progress": running_processes[deck_id].progress,
         }
     )
+
+
+@generator.route("/test")
+def test():
+    card, n_next = cards.generate_front_score_card("brontosaurus", 1, 84)
+    card.save("score_front.png", "PNG")
+
+    card = cards.generate_back_score_card("brontosaurus", n_next, 84)
+    card.save("score_back.png", "PNG")
+    return "ok"
