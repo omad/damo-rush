@@ -51,6 +51,15 @@ def init_db():
     )
     conn.commit()
 
+    cursor.execute(
+        """
+        CREATE TABLE dl_count (
+          [id] text PRIMARY KEY UNIQUE,
+          [nb] integer
+        )"""
+    )
+    conn.commit()
+
     def get_elements(grid):
         elements = defaultdict(list)
         nb_wall = 0
@@ -140,7 +149,7 @@ def init_db():
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database.')
+    click.echo('Database initialize')
 
 
 def init_app(app):

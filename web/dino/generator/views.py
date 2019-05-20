@@ -14,15 +14,21 @@ running_processes = {}
 
 
 def _deck_id_from_args(args):
+    limits = ""
+    for el, (low, high) in args["limits"].items():
+        limits += f"-{low},{high}"
+
     return (
         f"{args['icon']}-{args['nb_move']}-{args['index_move']}-"
-        f"{args['n']}-{args['step']}-{args['limits']}"
+        f"{args['n']}-{args['step']}{limits}"
     )
 
 
 def _get_list_info(filename):
-    icon, nb_move, index_move, n, step, *limits = filename.split("-")
-    return {
+    icon, nb_move, index_move, n, step, *limits = os.path.splitext(filename)[0].split(
+        "-"
+    )
+    res = {
         "icon": icon,
         "nb_move": nb_move,
         "index_move": index_move,
@@ -30,6 +36,12 @@ def _get_list_info(filename):
         "step": step,
         "url": filename,
     }
+
+    for el, limit in zip(["cars", "trucks", "walls"], limits):
+        low, high = limit.split(",")
+        res[el] = (low, high)
+
+    return res
 
 
 class ExportingThread(threading.Thread):
@@ -117,7 +129,6 @@ def test():
 @generator.route("/list")
 def list_deck():
     files = [f for f in os.listdir("deck_output") if f.endswith(".zip")]
-    print(files)
     return render_template("list.html", files=files)
 
 
@@ -129,6 +140,15 @@ def api_list_deck():
 
 @generator.route("/dl/<path:path>")
 def dl_deck(path):
+    con = get_db()
+    c = con.cursor()
+
+    c.execute("select * from dl_count where id = :path", {"path": path})
+    if c.fetchone() is None:
+        c.execute("INSERT INTO dl_count (id, nb) VALUES (:path, 1)", {"path": path})
+    else:
+        c.execute("UPDATE dl_count SET nb = nb+1 WHERE id = :path", {"path": path})
+    con.commit()
     return send_from_directory(directory="../deck_output", filename=path)
 
 
@@ -142,7 +162,7 @@ def build_deck():
         "index_move": 1,
         "icon": "brontosaurus",
         "n": 50,
-        "limits": None,
+        "limits": {"cars": (1, 13), "trucks": (0, 4), "wall": (0, 2)},
         "step": 1,
     }
     deck_id = _deck_id_from_args(args)

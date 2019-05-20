@@ -15,6 +15,18 @@
     {{row.value}}
   </template>
 
+  <template slot="cars" slot-scope="row">
+    {{row.value[0]}} to {{row.value[1]}}
+  </template>
+
+  <template slot="trucks" slot-scope="row">
+    {{row.value[0]}} to {{row.value[1]}}
+  </template>
+  
+  <template slot="walls" slot-scope="row">
+    {{row.value[0]}} to {{row.value[1]}}
+  </template>
+
   <template slot="url" slot-scope="row">
     <a v-bind:href="'/gen/dl/'.concat(row.value)">
       <b-button size="sm">
@@ -62,6 +74,21 @@
                 { 
                   key: 'step',
                   label: 'Step',
+                  sortable: true
+                },
+                { 
+                  key: 'cars',
+                  label: 'Number of cars',
+                  sortable: true
+                },
+                { 
+                  key: 'trucks',
+                  label: 'Number of trucks',
+                  sortable: true
+                },
+                { 
+                  key: 'walls',
+                  label: 'Number of walls',
                   sortable: true
                 },
                 { 
