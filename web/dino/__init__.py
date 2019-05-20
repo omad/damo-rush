@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, jsonify
 from . import db, graphics
 
 
@@ -42,6 +42,20 @@ def create_app(test_config=None):
     @app.route("/credits")
     def credits():
         return render_template("credits.html")
+
+    @app.route("/stats")
+    def stats():
+        return render_template("stats.html")
+
+    @app.route("/api/stats")
+    def api_stats():
+        conn = db.get_db()
+        c = conn.cursor()
+        c.execute("select * from dl_count")
+
+        data = [dict(row) for row in c.fetchall()]
+        total = sum(row["nb"] for row in data)
+        return jsonify({"total":total, "list":data})
 
     @app.route("/favicon.ico")
     def favicon():

@@ -143,7 +143,7 @@ def dl_deck(path):
     con = get_db()
     c = con.cursor()
 
-    c.execute("select * from dl_count where id = :path", {"path": path})
+    c.execute("SELECT * FROM dl_count WHERE id = :path", {"path": path})
     if c.fetchone() is None:
         c.execute("INSERT INTO dl_count (id, nb) VALUES (:path, 1)", {"path": path})
     else:
