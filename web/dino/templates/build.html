@@ -21,7 +21,6 @@
 The generated deck will still be available in the 'Donwload list' section for some times (The site will delete the older deck when it run out of storing space).
 </p>
 
-
 {% endblock %}
 
 
@@ -32,7 +31,7 @@ The generated deck will still be available in the 'Donwload list' section for so
           data () {
             return {
               deck: {
-                id:null,
+                id:'[[deck_id]]',
                 progress:0
               },
               dlready: false,
@@ -42,7 +41,7 @@ The generated deck will still be available in the 'Donwload list' section for so
             gen_deck: function (event) {
               this.dlready = false;
               axios
-                .get('/gen/api/new_deck')
+                .get('/gen/api/new_deck/'.concat(this.deck.id))
                 .then(response => {
                   this.deck = response.data
 
@@ -65,7 +64,10 @@ The generated deck will still be available in the 'Donwload list' section for so
               }
               return "primary";
             }
-          }
+          },
+              mounted() {
+                      this.gen_deck();
+                    },
   })
 </script>
 {% endblock %}

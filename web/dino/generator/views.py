@@ -3,7 +3,14 @@ import shutil
 import threading
 from zipfile import ZipFile
 
-from flask import Blueprint, render_template, request, jsonify, send_from_directory
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    jsonify,
+    send_from_directory,
+    redirect,
+)
 
 from dino.generator import cards
 from dino.db import get_db
@@ -24,22 +31,21 @@ def _deck_id_from_args(args):
     )
 
 
-def _get_list_info(filename):
-    icon, nb_move, index_move, n, step, *limits = os.path.splitext(filename)[0].split(
-        "-"
-    )
+def _get_list_info(deck_id):
+    icon, nb_move, index_move, n, step, *limits = deck_id.split("-")
     res = {
         "icon": icon,
-        "nb_move": nb_move,
-        "index_move": index_move,
-        "n": n,
-        "step": step,
-        "url": filename,
+        "nb_move": int(nb_move),
+        "index_move": int(index_move),
+        "n": int(n),
+        "step": int(step),
+        "url": deck_id + ".zip",
+        "deck_id": deck_id,
     }
 
     for el, limit in zip(["cars", "trucks", "walls"], limits):
         low, high = limit.split(",")
-        res[el] = (low, high)
+        res[el] = (int(low), int(high))
 
     return res
 
@@ -156,7 +162,11 @@ def list_deck():
 
 @generator.route("/api/list")
 def api_list_deck():
-    files = [_get_list_info(f) for f in os.listdir("deck_output") if f.endswith(".zip")]
+    files = [
+        _get_list_info(os.path.splitext(f)[0])
+        for f in os.listdir("deck_output")
+        if f.endswith(".zip")
+    ]
     return jsonify(files)
 
 
@@ -174,21 +184,49 @@ def dl_deck(path):
     return send_from_directory(directory="../deck_output", filename=path)
 
 
-@generator.route("/api/new_deck")
-def build_deck():
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
+
+
+class MyForm(FlaskForm):
+    icon = StringField("icon", validators=[DataRequired()])
+
+
+@generator.route("/submit", methods=("GET", "POST"))
+def submit():
+    form = MyForm(request.form)
+    if form.validate_on_submit():
+        print("ok")
+        print(form)
+        args = {
+            "nb_move": 50,
+            "index_move": 1,
+            "icon": form.icon.data,
+            "n": 50,
+            "limits": {"cars": (1, 13), "trucks": (0, 4), "wall": (0, 2)},
+            "step": 1,
+        }
+        deck_id = _deck_id_from_args(args)
+        print(deck_id)
+        return redirect("/gen/success/" + deck_id)
+    print("nok")
+    return render_template("submit.html", form=form)
+
+
+@generator.route("/success/<string:deck_id>")
+def sucess(deck_id):
+
+    return render_template("build.html", deck_id=deck_id)
+
+
+@generator.route("/api/new_deck/<string:deck_id>")
+def build_deck(deck_id):
     # FIXME takes limits from the url
     global running_processes
 
-    args = {
-        "nb_move": 50,
-        "index_move": 1,
-        "icon": "brontosaurus",
-        "n": 50,
-        "limits": {"cars": (1, 13), "trucks": (0, 4), "wall": (0, 2)},
-        "step": 1,
-    }
-    deck_id = _deck_id_from_args(args)
-    args["deck_id"] = deck_id
+    args = _get_list_info(deck_id)
+    print(args)
 
     c = get_db().cursor()
     # FIXME query to implement with correct filter
