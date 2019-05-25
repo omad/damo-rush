@@ -10,7 +10,12 @@ from flask import (
     jsonify,
     send_from_directory,
     redirect,
+    abort,
 )
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, DecimalField
+from wtforms.validators import DataRequired, NumberRange
 
 from dino.generator import cards
 from dino.db import get_db
@@ -149,11 +154,6 @@ class ExportingThread(threading.Thread):
         self.step = "done"
 
 
-@generator.route("/")
-def build():
-    return render_template("build.html")
-
-
 @generator.route("/list")
 def list_deck():
     files = [f for f in os.listdir("deck_output") if f.endswith(".zip")]
@@ -172,51 +172,64 @@ def api_list_deck():
 
 @generator.route("/dl/<path:path>")
 def dl_deck(path):
-    con = get_db()
-    c = con.cursor()
-
-    c.execute("SELECT * FROM dl_count WHERE id = :path", {"path": path})
-    if c.fetchone() is None:
-        c.execute("INSERT INTO dl_count (id, nb) VALUES (:path, 1)", {"path": path})
-    else:
-        c.execute("UPDATE dl_count SET nb = nb+1 WHERE id = :path", {"path": path})
-    con.commit()
-    return send_from_directory(directory="../deck_output", filename=path)
-
-
-from flask_wtf import FlaskForm
-from wtforms import StringField
-from wtforms.validators import DataRequired
+    if os.path.isfile(os.path.join("deck_output", path)):
+        con = get_db()
+        c = con.cursor()
+        c.execute("SELECT * FROM dl_count WHERE id = :path", {"path": path})
+        if c.fetchone() is None:
+            c.execute("INSERT INTO dl_count (id, nb) VALUES (:path, 1)", {"path": path})
+        else:
+            c.execute("UPDATE dl_count SET nb = nb+1 WHERE id = :path", {"path": path})
+        con.commit()
+        return send_from_directory(directory="../deck_output", filename=path)
+    abort(404)
 
 
-class MyForm(FlaskForm):
+class DeckForm(FlaskForm):
     icon = StringField("icon", validators=[DataRequired()])
+    nb_move = DecimalField("nb_move", validators=[NumberRange(2, 60)])
+    index_move = DecimalField("index_move", validators=[])
+    n = DecimalField("n", validators=[NumberRange(1, 84)])
+    step = DecimalField("step", validators=[])
+    car_min = DecimalField("car_min", validators=[NumberRange(2, 17)])
+    car_max = DecimalField("car_max", validators=[NumberRange(2, 17)])
+    truck_min = DecimalField("truck_min", validators=[NumberRange(0, 10)])
+    truck_max = DecimalField("truck_max", validators=[NumberRange(0, 10)])
+    wall_min = DecimalField("wall_min", validators=[NumberRange(0, 2)])
+    wall_max = DecimalField("wall_max", validators=[NumberRange(0, 2)])
 
 
-@generator.route("/submit", methods=("GET", "POST"))
+@generator.route("/")
+@generator.route("/submit_deck", methods=("GET", "POST"))
 def submit():
-    form = MyForm(request.form)
+    form = DeckForm(request.form)
+    print(form)
+    for k in form:
+        print(k)
     if form.validate_on_submit():
         print("ok")
-        print(form)
         args = {
-            "nb_move": 50,
-            "index_move": 1,
+            "nb_move": form.nb_move.data,
+            "index_move": form.index_move.data,
             "icon": form.icon.data,
-            "n": 50,
-            "limits": {"cars": (1, 13), "trucks": (0, 4), "wall": (0, 2)},
-            "step": 1,
+            "n": form.n.data,
+            "step": form.step.data,
+            "limits": {
+                "cars": (form.car_min.data, form.car_max.data),
+                "trucks": (form.truck_min.data, form.truck_max.data),
+                "wall": (form.wall_min.data, form.wall_max.data),
+            },
         }
         deck_id = _deck_id_from_args(args)
         print(deck_id)
-        return redirect("/gen/success/" + deck_id)
+        return redirect("/gen/build/" + deck_id)
+    print(form.errors)
     print("nok")
-    return render_template("submit.html", form=form)
+    return render_template("deck_form.html", form=form)
 
 
-@generator.route("/success/<string:deck_id>")
-def sucess(deck_id):
-
+@generator.route("/build/<string:deck_id>")
+def build(deck_id):
     return render_template("build.html", deck_id=deck_id)
 
 
