@@ -1,28 +1,44 @@
 {% extends 'base.html' %}
 
+{% macro render_field(field) %}
+<b-col sm="4">
+  <dl>
+    <dt>[[ field.label ]]</dt>
+    <dd>[[ field(class_="form-control") ]]
+    {% if field.errors %}
+      {% for error in field.errors %}
+      <p class="text-danger">[[ error ]]</p>
+      {% endfor %}
+    {% endif %}
+    </dd>
+  </dl>
+</b-col>
+{% endmacro %}
+
 {% block content %}
 <div>
   <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
     <h6 slot="header" class="mb-0">Generate a new deck</h6>
     <form method="POST" action="/gen/submit_deck">
-      [[ form.csrf_token ]]
-      [[ form.icon.label ]] [[ form.icon(size=20) ]]
-      [[ form.nb_move.label ]] [[ form.nb_move ]]
-      [[ form.index_move.label ]] [[ form.index_move ]]
-      [[ form.n.label ]] [[ form.n ]]
-      [[ form.step.label ]] [[ form.step ]]
-      [[ form.car_min.label ]] [[ form.car_min ]]
-      [[ form.car_max.label ]] [[ form.car_max ]]
-      [[ form.truck_min.label ]] [[ form.truck_min ]]
-      [[ form.truck_max.label ]] [[ form.truck_max ]]
-      [[ form.wall_min.label ]] [[ form.wall_min ]]
-      [[ form.wall_max.label ]] [[ form.wall_max ]]
-      <input type="submit" value="Go">
+      <b-row>
+        [[ form.csrf_token ]]
+
+        [[ render_field(form.icon) ]]
+        [[ render_field(form.nb_move) ]]
+        [[ render_field(form.index_move) ]]
+        [[ render_field(form.n) ]]
+        [[ render_field(form.step) ]]
+        [[ render_field(form.car_min) ]]
+        [[ render_field(form.car_max) ]]
+        [[ render_field(form.truck_min) ]]
+        [[ render_field(form.truck_max) ]]
+        [[ render_field(form.wall_min) ]]
+        [[ render_field(form.wall_max) ]]
+      </b-row>
+      <input type="submit" value="Go" class="btn btn-primary">
     </form>
   </b-card>
 </div>
-
-
 {% endblock %}
 
 

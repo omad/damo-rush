@@ -186,17 +186,33 @@ def dl_deck(path):
 
 
 class DeckForm(FlaskForm):
-    icon = StringField("icon", validators=[DataRequired()])
-    nb_move = DecimalField("nb_move", validators=[NumberRange(2, 60)])
-    index_move = DecimalField("index_move", validators=[])
-    n = DecimalField("n", validators=[NumberRange(1, 84)])
-    step = DecimalField("step", validators=[])
-    car_min = DecimalField("car_min", validators=[NumberRange(2, 17)])
-    car_max = DecimalField("car_max", validators=[NumberRange(2, 17)])
-    truck_min = DecimalField("truck_min", validators=[NumberRange(0, 10)])
-    truck_max = DecimalField("truck_max", validators=[NumberRange(0, 10)])
-    wall_min = DecimalField("wall_min", validators=[NumberRange(0, 2)])
-    wall_max = DecimalField("wall_max", validators=[NumberRange(0, 2)])
+    icon = StringField(
+        "icon", validators=[DataRequired()], render_kw={"value": "stegosaurus"}
+    )
+    nb_move = DecimalField(
+        "nb_move", validators=[NumberRange(2, 60)], render_kw={"value": 60}
+    )
+    index_move = DecimalField("index_move", validators=[], render_kw={"value": 1})
+    n = DecimalField("n", validators=[NumberRange(1, 84)], render_kw={"value": 84})
+    step = DecimalField("step", validators=[], render_kw={"value": 1})
+    car_min = DecimalField(
+        "car_min", validators=[NumberRange(2, 17)], render_kw={"value": 2}
+    )
+    car_max = DecimalField(
+        "car_max", validators=[NumberRange(2, 17)], render_kw={"value": 17}
+    )
+    truck_min = DecimalField(
+        "truck_min", validators=[NumberRange(0, 10)], render_kw={"value": 0}
+    )
+    truck_max = DecimalField(
+        "truck_max", validators=[NumberRange(0, 10)], render_kw={"value": 4}
+    )
+    wall_min = DecimalField(
+        "wall_min", validators=[NumberRange(0, 2)], render_kw={"value": 0}
+    )
+    wall_max = DecimalField(
+        "wall_max", validators=[NumberRange(0, 2)], render_kw={"value": 0}
+    )
 
 
 @generator.route("/")
