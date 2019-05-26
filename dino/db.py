@@ -25,7 +25,7 @@ def close_db(e=None):
 
 
 def init_db():
-    grid_txt_file = "../cli/rush.txt"
+    grid_txt_file = "rush.txt"
 
     if os.path.exists(current_app.config["DATABASE"]):
         return

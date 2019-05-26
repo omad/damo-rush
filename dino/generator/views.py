@@ -43,7 +43,7 @@ def _get_list_info(deck_id):
         "nb_move": int(nb_move),
         "index_move": int(index_move),
         "n": int(n),
-        "step": int(step),
+        "step": 1,
         "url": deck_id + ".zip",
         "deck_id": deck_id,
     }
@@ -304,14 +304,7 @@ def progress(deck_id):
     global running_processes
     if deck_id not in running_processes:
         # check if present in file
-        return jsonify(
-            {
-                "id": deck_id,
-                "step": "missing",
-                "progress": running_processes[deck_id].progress,
-                "next": "",
-            }
-        )
+        return jsonify({"id": deck_id, "step": "missing", "progress": 0, "next": ""})
 
     return jsonify(
         {
