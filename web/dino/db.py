@@ -9,10 +9,9 @@ from flask.cli import with_appcontext
 
 
 def get_db():
-    if 'db' not in g:
+    if "db" not in g:
         g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
+            current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
 
@@ -20,19 +19,21 @@ def get_db():
 
 
 def close_db(e=None):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
     if db is not None:
         db.close()
 
 
 def init_db():
-    grid_txt_file = '../cli/rush.txt'
+    grid_txt_file = "../cli/rush.txt"
 
-    if os.path.exists(current_app.config['DATABASE']):
+    if os.path.exists(current_app.config["DATABASE"]):
         return
         # os.remove(db_file) # used for debug
 
-    print(f"[DB] Creating database {current_app.config['DATABASE']} from grid file {grid_txt_file}")
+    print(
+        f"[DB] Creating database {current_app.config['DATABASE']} from grid file {grid_txt_file}"
+    )
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
@@ -144,12 +145,12 @@ def init_db():
     conn.close()
 
 
-@click.command('init-db')
+@click.command("init-db")
 @with_appcontext
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Database initialize')
+    click.echo("Database initialize")
 
 
 def init_app(app):
