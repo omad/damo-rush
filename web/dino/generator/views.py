@@ -175,11 +175,12 @@ def dl_deck(path):
     if os.path.isfile(os.path.join("deck_output", path)):
         con = get_db()
         c = con.cursor()
-        c.execute("SELECT * FROM dl_count WHERE id = :path", {"path": path})
-        if c.fetchone() is None:
-            c.execute("INSERT INTO dl_count (id, nb) VALUES (:path, 1)", {"path": path})
+        c.execute("SELECT * FROM dl_count WHERE id = ?", (path,))
+        res = c.fetchone()
+        if res is None:
+            c.execute("INSERT INTO dl_count (id, nb) VALUES (?, ?)", (path, 1))
         else:
-            c.execute("UPDATE dl_count SET nb = nb+1 WHERE id = :path", {"path": path})
+            c.execute("UPDATE dl_count SET nb = ? WHERE id = ?", (res["nb"] + 1, path))
         con.commit()
         return send_from_directory(directory="../deck_output", filename=path)
 
