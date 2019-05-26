@@ -208,7 +208,7 @@ class DeckForm(FlaskForm):
     )
     index_move = DecimalField("index_move", validators=[], render_kw={"value": 1})
     n = DecimalField("n", validators=[NumberRange(1, 84)], render_kw={"value": 84})
-    step = DecimalField("step", validators=[], render_kw={"value": 1})
+    step = DecimalField("step", validators=[], render_kw={"value": 1, "disabled": ""})
     car_min = DecimalField(
         "car_min", validators=[NumberRange(2, 17)], render_kw={"value": 2}
     )

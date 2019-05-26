@@ -20,7 +20,7 @@
 <p v-if="dlready">
 The generated deck will still be available in the 'Donwload list' section for some times (The site will delete the older deck when it run out of storing space).
 </p>
-<p v-if="dlready">Use nb_move = {{deck.next[0]}}, nb_index = {{deck.next[1]}} to generate the following deck.</p>
+<p v-if="dlready">You can use <span class="text-info">nb_move = {{deck.next[0]}}, nb_index = {{deck.next[1]}}</span> as starting parameter to generate the next deck if you need more puzzles.</p>
 
 {% endblock %}
 

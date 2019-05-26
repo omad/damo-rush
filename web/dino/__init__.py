@@ -43,6 +43,10 @@ def create_app(test_config=None):
     def credits():
         return render_template("credits.html")
 
+    @app.route("/print")
+    def print():
+        return render_template("print.html")
+
     @app.route("/stats")
     def stats():
         return render_template("stats.html")
@@ -55,7 +59,7 @@ def create_app(test_config=None):
 
         data = [dict(row) for row in c.fetchall()]
         total = sum(row["nb"] for row in data)
-        return jsonify({"total":total, "list":data})
+        return jsonify({"total": total, "list": data})
 
     @app.route("/favicon.ico")
     def favicon():
