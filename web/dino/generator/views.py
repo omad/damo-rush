@@ -14,7 +14,7 @@ from flask import (
 )
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField
+from wtforms import RadioField, DecimalField
 from wtforms.validators import DataRequired, NumberRange
 
 from dino.generator import cards
@@ -182,12 +182,24 @@ def dl_deck(path):
             c.execute("UPDATE dl_count SET nb = nb+1 WHERE id = :path", {"path": path})
         con.commit()
         return send_from_directory(directory="../deck_output", filename=path)
+
+    if os.path.isfile(os.path.join("graphics", "static", "dino", path)):
+        return send_from_directory(directory="../graphics/static/dino", filename=path)
+
     abort(404)
 
 
 class DeckForm(FlaskForm):
-    icon = StringField(
-        "icon", validators=[DataRequired()], render_kw={"value": "stegosaurus"}
+    icon = RadioField(
+        "icon",
+        choices=[
+            ("stegosaurus", "stegosaurus"),
+            ("brontosaurus", "brontosaurus"),
+            ("elasmosaurus", "elasmosaurus"),
+            ("ichthyosaurus", "ichthyosaurus"),
+            ("parasaurolophus", "parasaurolophus"),
+        ],
+        validators=[DataRequired()],
     )
     nb_move = DecimalField(
         "nb_move", validators=[NumberRange(2, 60)], render_kw={"value": 60}

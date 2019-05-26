@@ -4,12 +4,30 @@
 <b-col sm="4">
   <dl>
     <dt>[[ field.label ]]</dt>
-    <dd>[[ field(class_="form-control") ]]
-    {% if field.errors %}
-      {% for error in field.errors %}
-      <p class="text-danger">[[ error ]]</p>
+    <dd>
+    {% if field.name == 'icon' %}
+    <b-row>
+      {% for subfield in field %}
+      <b-col center>
+        <label for=[[subfield.id]]>
+          [[ subfield ]]
+          <b-img thumbnail fluid margin-bottom="10px" src="dl/[[subfield.data]].svg" alt=[[subfield.data]] width="60px"></b-img></br>
+          [[ subfield.data ]]</label>
+        </br>
+      </b-col>
       {% endfor %}
+    </b-row>
+    {% else %}
+    [[ field(class_="form-control") ]]
     {% endif %}
+
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <p class="text-danger">[[ error ]]</p>
+    {% endfor %}
+    {% endif %}
+    </dd>
+    <dd>
     </dd>
   </dl>
 </b-col>
