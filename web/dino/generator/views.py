@@ -200,6 +200,7 @@ class DeckForm(FlaskForm):
             ("ichthyosaurus", "ichthyosaurus"),
             ("parasaurolophus", "parasaurolophus"),
         ],
+        default="stegosaurus",
         validators=[DataRequired()],
     )
     nb_move = DecimalField(
@@ -232,11 +233,7 @@ class DeckForm(FlaskForm):
 @generator.route("/submit_deck", methods=("GET", "POST"))
 def submit():
     form = DeckForm(request.form)
-    print(form)
-    for k in form:
-        print(k)
     if form.validate_on_submit():
-        print("ok")
         args = {
             "nb_move": form.nb_move.data,
             "index_move": form.index_move.data,
@@ -250,10 +247,7 @@ def submit():
             },
         }
         deck_id = _deck_id_from_args(args)
-        print(deck_id)
         return redirect("/gen/build/" + deck_id)
-    print(form.errors)
-    print("nok")
     return render_template("deck_form.html", form=form)
 
 
@@ -264,18 +258,43 @@ def build(deck_id):
 
 @generator.route("/api/new_deck/<string:deck_id>")
 def build_deck(deck_id):
-    # FIXME takes limits from the url
-    global running_processes
-
     args = _get_list_info(deck_id)
     print(args)
+    cars = sorted(list(args["cars"]))
+    trucks = sorted(list(args["trucks"]))
+    walls = sorted(list(args["walls"]))
 
     c = get_db().cursor()
-    # FIXME query to implement with correct filter
-    c.execute("SELECT * FROM games LIMIT :n", {"n": args["n"]})
-    # TODO override n with how many row were found
 
-    running_processes[deck_id] = ExportingThread(c.fetchall(), args)
+    c.execute(
+        "select * from games where nb_move = ? and index_ = ?",
+        (args["nb_move"], args["index_move"]),
+    )
+
+    # Test if asked starting pos exist
+    row = c.fetchone()
+    if row is None:
+        args["nb_move"] -= 1
+        args["index_move"] = 1
+
+    print(row)
+    c.execute(
+        """
+        SELECT * FROM games
+        where nb_wall between ? and ?
+        and nb_car between ? and ?
+        and nb_truck between ? and ?
+         LIMIT ?
+        """,
+        (*walls, *cars, *trucks, args["n"] + 1),
+    )
+
+    *rows, next_row = c.fetchall()
+    args["n"] = len(rows)
+    args["next"] = (next_row["nb_move"], next_row["index_"])
+
+    global running_processes
+    running_processes[deck_id] = ExportingThread(rows, args)
     running_processes[deck_id].start()
     return jsonify({"id": deck_id, "step": "mkcards", "progress": 0})
 
@@ -290,6 +309,7 @@ def progress(deck_id):
                 "id": deck_id,
                 "step": "missing",
                 "progress": running_processes[deck_id].progress,
+                "next": "",
             }
         )
 
@@ -298,6 +318,7 @@ def progress(deck_id):
             "id": deck_id,
             "step": running_processes[deck_id].step,
             "progress": running_processes[deck_id].progress,
+            "next": running_processes[deck_id].args["next"],
         }
     )
 

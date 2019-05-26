@@ -20,6 +20,7 @@
 <p v-if="dlready">
 The generated deck will still be available in the 'Donwload list' section for some times (The site will delete the older deck when it run out of storing space).
 </p>
+<p v-if="dlready">Use nb_move = {{deck.next[0]}}, nb_index = {{deck.next[1]}} to generate the following deck.</p>
 
 {% endblock %}
 
@@ -32,7 +33,8 @@ The generated deck will still be available in the 'Donwload list' section for so
             return {
               deck: {
                 id:'[[deck_id]]',
-                progress:0
+                progress:0,
+                next:[],
               },
               dlready: false,
             }
