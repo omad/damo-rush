@@ -5,11 +5,11 @@
   <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
     <h6 slot="header" class="mb-0">Generate a new deck</h6>
     <b-card-text>processing deck ID: {{deck.id}}</b-card-text>
-    <b-card-text>progress : {{deck.progress}}%</b-card-text>
     <b-progress
-      :value="deck.progress"
+      :value="100"
       :max="100"
-      v-bind:variant="getBarColor(deck.step)"
+      v-bind:variant="getBarColor()"
+      v-bind:animated="!dlready"
       ></b-progress>
   </b-card>
 </div>
@@ -20,7 +20,6 @@
 <p v-if="dlready">
 The generated deck will still be available in the 'Donwload list' section for some times (The site will delete the older deck when it run out of storing space).
 </p>
-<p v-if="dlready">You can use <span class="text-info">nb_move = {{deck.next[0]}}, nb_index = {{deck.next[1]}}</span> as starting parameter to generate the next deck if you need more puzzles.</p>
 
 {% endblock %}
 
@@ -33,8 +32,7 @@ The generated deck will still be available in the 'Donwload list' section for so
             return {
               deck: {
                 id:'[[deck_id]]',
-                progress:0,
-                next:[],
+                step:'',
               },
               dlready: false,
             }
@@ -59,7 +57,7 @@ The generated deck will still be available in the 'Donwload list' section for so
                   }, 500);
                 });
             },
-            getBarColor(step){
+            getBarColor(){
               if (this.deck.step === "done"){
                 this.dlready = true;
                 return "success";

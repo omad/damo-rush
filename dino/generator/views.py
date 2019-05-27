@@ -60,30 +60,27 @@ class ExportingThread(threading.Thread):
         super().__init__()
         self.rows = rows
         self.args = args
-        self.progress = 0
-        self.step = None
 
     def run(self):
         if not os.path.exists("deck_output"):
             os.makedirs("deck_output")
 
-        deck_path = os.path.join("deck_output", f"{self.args['deck_id']}.zip")
-        if os.path.exists(deck_path):
-            self.progress = 100
-            self.step = "done"
+        deck_file = os.path.join("deck_output", f"{self.args['deck_id']}.zip")
+        if os.path.exists(deck_file):
+            print("exit cards generation thread: deck.zip exist")
             return
 
         # TODO delete oldest zip if total space taken too high
 
-        # TODO generate_title_card(icon, deck_parameter_str)
-        self.step = "mkcards"
-
         cards_dir = os.path.join("deck_output", str(self.args["deck_id"]))
 
-        if not os.path.exists(cards_dir):
-            os.makedirs(cards_dir)
+        if os.path.exists(cards_dir):
+            print("exit cards generation thread: card folder exist")
+            return
 
-        with ZipFile(deck_path, "w") as myzip:
+        os.makedirs(cards_dir)
+
+        with ZipFile(deck_file, "w") as myzip:
             # front title card
             card = cards.generate_front_title_card(self.args["icon"])
             card_filename = "front.png"
@@ -93,7 +90,6 @@ class ExportingThread(threading.Thread):
             )
             card.save(card_filepath, "PNG")
             myzip.write(card_filepath, arcname=card_arcname)
-            self.progress = 100 * 1 // (self.args["n"] + 2)
 
             # back title card
             card = cards.generate_back_title_card()
@@ -104,7 +100,6 @@ class ExportingThread(threading.Thread):
             )
             card.save(card_filepath, "PNG")
             myzip.write(card_filepath, arcname=card_arcname)
-            self.progress = 100 * 2 // (self.args["n"] + 2)
 
             for i, row in enumerate(self.rows):
                 side = "verso" if i % 2 else "recto"
@@ -127,7 +122,6 @@ class ExportingThread(threading.Thread):
                     f"[Card] {self.args['icon']} {i + 1} generated "
                     f"({row['nb_move']}, {row['index_']}/{row['index_max']})"
                 )
-                self.progress = 100 * (i + 3) // (self.args["n"] + 2)
 
             card, n_next = cards.generate_front_score_card(
                 self.args["icon"], 1, self.args["n"]
@@ -156,6 +150,9 @@ class ExportingThread(threading.Thread):
 
 @generator.route("/list")
 def list_deck():
+    if not os.path.exists("deck_output"):
+        os.makedirs("deck_output")
+
     files = [f for f in os.listdir("deck_output") if f.endswith(".zip")]
     return render_template("list.html", files=files)
 
@@ -296,31 +293,12 @@ def build_deck(deck_id):
     global running_processes
     running_processes[deck_id] = ExportingThread(rows, args)
     running_processes[deck_id].start()
-    return jsonify({"id": deck_id, "step": "mkcards", "progress": 0})
+    return jsonify({"id": deck_id, "step": "starting_generation"})
 
 
 @generator.route("/api/status/<string:deck_id>")
-def progress(deck_id):
-    global running_processes
-    if deck_id not in running_processes:
-        # check if present in file
-        return jsonify({"id": deck_id, "step": "missing", "progress": 0, "next": ""})
+def status(deck_id):
+    if os.path.exists(os.path.join("deck_output", f"{deck_id}")):
+        return jsonify({"id": deck_id, "step": "in_preparation"})
 
-    return jsonify(
-        {
-            "id": deck_id,
-            "step": running_processes[deck_id].step,
-            "progress": running_processes[deck_id].progress,
-            "next": running_processes[deck_id].args["next"],
-        }
-    )
-
-
-@generator.route("/test")
-def test():
-    card, n_next = cards.generate_front_score_card("brontosaurus", 1, 84)
-    card.save("score_front.png", "PNG")
-
-    card = cards.generate_back_score_card("brontosaurus", n_next, 84)
-    card.save("score_back.png", "PNG")
-    return "ok"
+    return jsonify({"id": deck_id, "step": "done"})
