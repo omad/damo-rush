@@ -226,8 +226,9 @@ class DeckForm(FlaskForm):
     )
 
 
-@generator.route("/")
-@generator.route("/submit_deck", methods=("GET", "POST"))
+@generator.route("/gen/")
+@generator.route("/gen")
+@generator.route("/gen/submit_deck", methods=("GET", "POST"))
 def submit():
     form = DeckForm(request.form)
     if form.validate_on_submit():
@@ -248,7 +249,7 @@ def submit():
     return render_template("deck_form.html", form=form)
 
 
-@generator.route("/build/<string:deck_id>")
+@generator.route("/gen/build/<string:deck_id>")
 def build(deck_id):
     return render_template("build.html", deck_id=deck_id)
 

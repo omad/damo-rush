@@ -18,7 +18,7 @@
       <b-col center>
         <label for=[[subfield.id]]>
           [[ subfield ]]
-          <b-img thumbnail fluid margin-bottom="10px" src="dl/[[subfield.data]].svg" alt=[[subfield.data]] width="60px"></b-img></br>
+          <b-img thumbnail fluid margin-bottom="10px" src="../dl/[[subfield.data]].svg" alt=[[subfield.data]] width="60px"></b-img></br>
           [[ subfield.data ]]</label>
         </br>
       </b-col>
@@ -66,6 +66,7 @@ The default value below represent the hardest (as in number of move require) puz
       </b-row>
       <input type="submit" value="Go" class="btn btn-primary">
     </form>
+    <p>Note: A score card will be included in the deck, to keep track of your achievement, It will include at most 84 tick box for the first 84 puzzles. I thus recommend you to not go over this number for a deck...</p>
   </b-card>
 </div>
 {% endblock %}

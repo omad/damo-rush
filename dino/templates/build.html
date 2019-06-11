@@ -14,7 +14,7 @@
   </b-card>
 </div>
 <p v-if="dlready">
-<a v-bind:href="'/gen/dl/'.concat(deck.id).concat('.zip')"><ion-icon style="font-size: 100px" name="cloud-download"></ion-icon></a>
+<a v-bind:href="'/dl/'.concat(deck.id).concat('.zip')"><ion-icon style="font-size: 100px" name="cloud-download"></ion-icon></a>
 </p>
 
 <p v-if="dlready">
@@ -41,7 +41,7 @@ The generated deck will still be available in the 'Donwload list' section for so
             gen_deck: function (event) {
               this.dlready = false;
               axios
-                .get('/gen/api/new_deck/'.concat(this.deck.id))
+                .get('/api/new_deck/'.concat(this.deck.id))
                 .then(response => {
                   this.deck = response.data
 
@@ -49,7 +49,7 @@ The generated deck will still be available in the 'Donwload list' section for so
                   var self = this;
                   this.refresh_progress = setInterval(function(){
                     axios
-                      .get('/gen/api/status/'.concat(self.deck.id))
+                      .get('/api/status/'.concat(self.deck.id))
                       .then(response => (self.deck = response.data));
                     if (self.deck.step === 'done') {
                       clearInterval(self.refresh_progress);

@@ -71,6 +71,6 @@ def create_app(test_config=None):
 
     from .generator import generator as generator_blueprint
 
-    app.register_blueprint(generator_blueprint, url_prefix="/gen")
+    app.register_blueprint(generator_blueprint, url_prefix="")
 
     return app

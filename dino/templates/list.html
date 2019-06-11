@@ -25,7 +25,7 @@
   </template>
 
   <template slot="url" slot-scope="row">
-    <a v-bind:href="'/gen/dl/'.concat(row.value)">
+    <a v-bind:href="'/dl/'.concat(row.value)">
       <b-button size="sm">
         Download
       </b-button>
@@ -92,7 +92,7 @@
           },
           mounted: function () {
             axios
-              .get('/gen/api/list')
+              .get('/api/list')
               .then(response => {
                 this.items = response.data
               });
