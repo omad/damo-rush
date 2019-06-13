@@ -104,6 +104,7 @@ class ExportingThread(threading.Thread):
             for i, row in enumerate(self.rows):
                 side = "verso" if i % 2 else "recto"
                 card_filename = f"{i + 1}.png"
+                print(f'[gen] {card_filename}')
                 card_arcname = os.path.join(
                     side, f"{1 + i // 2:0{len(str(1 + self.args['n'] // 2))}d}.png"
                 )

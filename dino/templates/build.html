@@ -5,6 +5,7 @@
   <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
     <h6 slot="header" class="mb-0">Generate a new deck</h6>
     <b-card-text>processing deck ID: {{deck.id}}</b-card-text>
+    <b-card-text>It takes aproximately 1s to generate 2 to 3 cards...</b-card-text>
     <b-progress
       :value="100"
       :max="100"
@@ -54,7 +55,7 @@ The generated deck will still be available in the 'Donwload list' section for so
                     if (self.deck.step === 'done') {
                       clearInterval(self.refresh_progress);
                     }
-                  }, 500);
+                  }, 3000);
                 });
             },
             getBarColor(){
