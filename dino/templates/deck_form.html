@@ -45,6 +45,15 @@
 The default value below represent the hardest (as in number of move require) puzzles (nb_move=60, index_move=1), using a normal physical board. You'll need mostly to adjust truck-max, wall-max if using additional pieces.
 </p>
 
+<p>
+The nb_move, nb_index represent the position of the hard side of the range that will be in the deck. nb_move is the total of move needed to solve the puzzle (60 is the max possible), while nb_index is the puzzle number at that number of move (this depends for each difficulty...).
+</p>
+
+
+<p>
+To print consecutive deck, first start at 60,1 if you want the hardest, then continue with the x, y+1 where x,y are the number of the easy side of the previous deck you generated.
+</p>
+
 <div>
   <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
     <h6 slot="header" class="mb-0">Generate a new deck</h6>
