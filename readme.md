@@ -8,8 +8,8 @@ An online instance of the web deck generator is currently available [here](http:
 ```sh
 git clone clone export https://gitlab.com/crazyiop/dino-rush
 cd dino-rush
-pip3 install --user -r requirements.txt
 apt install libcairo2-dev
+pip3 install --user -r requirements.txt
 ```
 
 ## Running a local instance (development mode)
@@ -36,9 +36,13 @@ flask init-graphics
 
 To serve the website, I chose to use nginx/uwsgi.
 
+```sh
 cp dino.nginx /etc/nginx/sites-available/dino
+```
 create symlink to the above at /sites-enabled/dino
+```sh
 uwsgi --ini project.ini
+```
 
 ### additional setup
 dns zone -> add a cname entry, which target the main domain.
