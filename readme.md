@@ -40,5 +40,5 @@ cp dino.nginx /etc/nginx/sites-available/dino
 create symlink to the above at /sites-enabled/dino
 uwsgi --ini project.ini
 
-
-todo...
+### additional setup
+dns zone -> add a cname entry, which target the main domain.
