@@ -75,12 +75,12 @@ class ExportingThread(threading.Thread):
         cards_dir = os.path.join("deck_output", str(self.args["deck_id"]))
 
         if os.path.exists(cards_dir):
-            print("exit cards generation thread: card folder exist")
-            return
+            print("cards generation thread: card folder exist, removing it")
+            shutil.rmtree(cards_dir)
 
         os.makedirs(cards_dir)
 
-        with ZipFile(deck_file, "w") as myzip:
+        with ZipFile(deck_file+'.tmp', "w") as myzip:
             # front title card
             card = cards.generate_front_title_card(self.args["icon"])
             card_filename = "front.png"
@@ -146,6 +146,7 @@ class ExportingThread(threading.Thread):
             myzip.write(card_filepath, arcname=card_arcname)
 
         shutil.rmtree(cards_dir)
+        os.rename(deck_file+'.tmp', deck_file)
         self.step = "done"
 
 
