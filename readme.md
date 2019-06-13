@@ -1,97 +1,44 @@
-# Dino-Rush
-Dino-Rush allow to create custom problems deck of any size and any difficulty for the game rush-hour.
+# User welcome
 
-The dinosaur theme, used as a mean to differentiate multiple deck, has been chosen quite arbitrary because dinosaur are cool!
+An online instance of the web deck generator is currently available [here](http://www.dino.lagalenebleue.fr). This is probably where you want to go :)
 
-# Usage
-## Dependancy installation
+# Note to developers
+
+## Install
 ```sh
-$ pip3 install --upgrade --user cairosvg pillow
+git clone clone export https://gitlab.com/crazyiop/dino-rush
+cd dino-rush
+pip3 install --user -r requirements.txt
+apt install libcairo2-dev
 ```
 
-## Graphics generation
-This needs to be done once initialy and everytime you change the svg graphics or add one:
+## Running a local instance (development mode)
+Some one-time configuration are needed before your first run of the web server:
 ```sh
-$ ./mkgraphics.py
+export FLASK_APP=dino
+flask init-db # will take a few minutes
+flask init-graphics
 ```
 
-## Standalone card
-Makes a random card show up:
+Afterwards run the server with:
 ```sh
-$ ./mkcard.py
+export FLASK_APP=dino
+flask run
 ```
 
-You can specify a difficulty by chosing a number of move required (must be <= 60):
+## Running a web instance
+The same initial setup is needed:
 ```sh
-$ ./mkcard.py --level 42
+export FLASK_APP=dino
+flask init-db # will take a few minutes
+flask init-graphics
 ```
 
-You can also save the generated card instead of showing it with:
-```sh
-$ ./mkcard.py --save
-```
+To serve the website, I chose to use nginx/uwsgi.
 
-![card output](example/standalone_example.png "standalone output")
+cp dino.nginx /etc/nginx/sites-available/dino
+create symlink to the above at /sites-enabled/dino
+uwsgi --ini project.ini
 
-## Deck generation
-### Standard deck
-```sh
-$ ./mkdeck.py nb_move index_puzzle icon n
-$ ./mkdeck.py 30 1114 elasmosaurus 4
-```
- - `nb_move` and `index_puzzle` represent the index of the 'highest' puzzle that will be in the deck.
-   - `nb_move` is the number of move require to solve the puzzle. By lack of a better metrics this is used to represent the difficulty.
-   - `index_puzzle`, indicate the rank of the puzzle amongst all the one for nb\_move
- - `icon` represent the svg file that will be used to identified the deck. Two files are required
-   - `icon.svg`, a svg of 1/3 x 1/3 inch page properties
-   - `icon-big.svg`, a svg of 2 x 2 inch page properties
-   - ['stegosaurus', 'parasaurolophus', 'elasmosaurus', 'brontosaurus', 'ichthyosaurus'] are the provided available preset.
- - `n` is the number of puzzle produced.
-
-Result of the above command:
-
-![front output](example/deck/elasmosaurus-front.png "front output")
-![back output](example/deck/elasmosaurus-back.png "back output")
-![even output](example/deck/elasmosaurus-even-1.png "even output")
-![odd output](example/deck/elasmosaurus-odd-2.png "odd output")
-![even output](example/deck/elasmosaurus-even-3.png "even output")
-![odd output](example/deck/elasmosaurus-odd-4.png "odd output")
-
-### Customized constraint
-When generating a deck, puzzle are checked to be playable with a normal physical game (i.e. maximum 0 wall, 12 car, 4 truck).
-
-Those {min, max}×{wall, car, truck} value can be tweak. For example
- - if you bought the limo extension, use `--mintruck 5 --maxtruck 5` to generate a specific deck with 5 truck for every puzzle.
- - you can ask how much puzzle will be skiped between two card if you want a deck with a spread difficulty (might need to be high) with `--step 500`
- - if you handcraft 2 bariers like the photo below (which I recommend as it is quite easy and 'unlock' a lot of puzzles from the database), use `--maxwall 2` to generate deck with 0 up to 2 wall per puzzle.
-
-![diy barrier](example/barrier.jpg "diy barrier")
-
-## Printed result
-I printed 3 decks of 36 cards (which makes 35 cards * 2 puzzle plus a 'readme' card) on [printerstudio](https://www.printerstudio.com) using the 'bridge' size card.
-I printed the puzzle from the top of the database (most number of move needed to solve) with the following parameters:
-```sh
-./mkdeck.py 60 1 stegosaurus 70 --maxwall 2
-./mkdeck.py 46 8 parasaurolophus 70 --maxwall 2
-./mkdeck.py 44 29 elasmosaurus 70 --maxwall 2
-```
-
-For a total of 210 quite hard problem !!
-
-I bet this is way too much and I won't have them all solved for maybe years, but I wanted enough decks to have my own custom collection.
-
-![printed result](example/printed_result.jpg "printed result")
-
-# Limitation known
-The size of the input svg in the repo and some constant in the code are specificaly chosen and hardcoded, as the generated image will be printed on a specific sized card.
-
-I didn't reuse/code a solver as I feel that having the solution printed on the back of the card is pretty useless. This also free the place and allow me to print twice more problems per deck !
-
-The puzzle who require more than 12 car (rare) or more than 4 truck (I haven't looked if it is even possible in the database) are dismissed as they are not playable with the physical game.
-
-The database, and thus, the puzzles generated can contains up to two 'walls' cells: a 1x1 blocker that cannot move.
-
-# Credits
-See dedicated file [here](credits.md).
-
-The credits are separated to allow the automatic rendering of a specific card with credits on the deck.
+### additional setup
+dns zone -> add a cname entry, which target the main domain.

@@ -21,4 +21,4 @@ Original graphics are designed by Freepick and are available at:
  - [PT Sans Narrow](https://fonts.google.com/specimen/PT+Sans+Narrow) for credits.
 
 ## Library
- - Ilya Zverev for the [svg resize library](https://github.com/Zverik/svg-resize)
+ - [SVG resize library](https://github.com/Zverik/svg-resize) from Ilya Zverev.

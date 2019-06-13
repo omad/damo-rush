@@ -7,7 +7,7 @@ import cairosvg
 from svg_resize import process_stream as svg_resize
 
 assetdir = 'graphics'
-objsdir = 'objs'
+objsdir = os.path.join(assetdir, 'generated')
 dpi = 300
 
 # (clear, dark) colors code for some preset

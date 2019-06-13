@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<b-table
+      show-empty
+      stacked="md"
+      :items="items"
+      :fields="fields"
+      >
+
+  <template slot="icon" slot-scope="row">
+    {{row.value}}
+  </template>
+
+  <template slot="cars" slot-scope="row">
+    {{row.value[0]}} to {{row.value[1]}}
+  </template>
+
+  <template slot="trucks" slot-scope="row">
+    {{row.value[0]}} to {{row.value[1]}}
+  </template>
+  
+  <template slot="walls" slot-scope="row">
+    {{row.value[0]}} to {{row.value[1]}}
+  </template>
+
+  <template slot="url" slot-scope="row">
+    <a v-bind:href="'/dl/'.concat(row.value)">
+      <b-button size="sm">
+        Download
+      </b-button>
+    </a>
+  </template>
+</b-table>
+{% endblock %}
+
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+          data () {
+            return {
+              fields: [
+                { 
+                  key: 'icon',
+                  label: 'Deck icon',
+                  sortable: true
+                },
+                { 
+                  key: 'nb_move',
+                  label: 'Starting nb move',
+                  sortable: true
+                },
+                { 
+                  key: 'index_move',
+                  label: 'Index',
+                  sortable: true
+                },
+                { 
+                  key: 'n',
+                  label: 'Number of puzzle',
+                  sortable: true
+                },
+                { 
+                  key: 'step',
+                  label: 'Step',
+                  sortable: true
+                },
+                { 
+                  key: 'cars',
+                  label: 'Number of cars',
+                  sortable: true
+                },
+                { 
+                  key: 'trucks',
+                  label: 'Number of trucks',
+                  sortable: true
+                },
+                { 
+                  key: 'walls',
+                  label: 'Number of walls',
+                  sortable: true
+                },
+                { 
+                  key: 'url',
+                  label: 'Download link',
+                }
+              ],
+              items: [],
+            }
+          },
+          mounted: function () {
+            axios
+              .get('/api/list')
+              .then(response => {
+                this.items = response.data
+              });
+          }
+  })
+</script>
+{% endblock %}

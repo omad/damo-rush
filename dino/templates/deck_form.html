@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% macro render_field(field) %}
+<b-col 
+  {% if field.name == 'icon' %}
+  sm="12"
+  {% else %}
+  sm="3"
+  {% endif %}
+  >
+
+  <dl>
+    <dt>[[ field.label ]]</dt>
+    <dd>
+    {% if field.name == 'icon' %}
+    <b-row>
+      {% for subfield in field %}
+      <b-col center>
+        <label for=[[subfield.id]]>
+          [[ subfield ]]
+          <b-img thumbnail fluid margin-bottom="10px" src="../dl/[[subfield.data]].svg" alt=[[subfield.data]] width="60px"></b-img></br>
+          [[ subfield.data ]]</label>
+        </br>
+      </b-col>
+      {% endfor %}
+    </b-row>
+    {% else %}
+    [[ field(class_="form-control") ]]
+    {% endif %}
+
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <p class="text-danger">[[ error ]]</p>
+    {% endfor %}
+    {% endif %}
+    </dd>
+    <dd>
+    </dd>
+  </dl>
+</b-col>
+{% endmacro %}
+
+{% block content %}
+<p>
+The default value below represent the hardest (as in number of move require) puzzles (nb_move=60, index_move=1), using a normal physical board. You'll need mostly to adjust truck-max, wall-max if using additional pieces.
+</p>
+
+<div>
+  <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
+    <h6 slot="header" class="mb-0">Generate a new deck</h6>
+    <form method="POST" action="/gen/submit_deck">
+      <b-row>
+        [[ form.csrf_token ]]
+
+        [[ render_field(form.icon) ]]
+        [[ render_field(form.nb_move) ]]
+        [[ render_field(form.index_move) ]]
+        [[ render_field(form.n) ]]
+        [[ render_field(form.step) ]]
+        [[ render_field(form.car_min) ]]
+        [[ render_field(form.car_max) ]]
+        [[ render_field(form.truck_min) ]]
+        [[ render_field(form.truck_max) ]]
+        [[ render_field(form.wall_min) ]]
+        [[ render_field(form.wall_max) ]]
+      </b-row>
+      <input type="submit" value="Go" class="btn btn-primary">
+    </form>
+    <p>Note: A score card will be included in the deck, to keep track of your achievement, It will include at most 84 tick box for the first 84 puzzles. I thus recommend you to not go over this number for a deck...</p>
+  </b-card>
+</div>
+{% endblock %}
+
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+  })
+</script>
+{% endblock %}

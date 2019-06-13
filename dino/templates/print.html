@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<b-jumbotron bg-variant="primary" text-variant="white">
+  <template slot="header">How to print</template>
+</b-jumbotron>
+
+<p>
+I recommand to go use Printer-studio to print the card. The graphics are designed to exactly fit the size of the bridge (no border) custom playing cards. To start the process <a href="https://www.printerstudio.com/personalized/bridge-size-custom-cards-blank-cards.html">go directly here</a>.
+</p>
+<p>A real world price point I can give you is: ~38€ for 3x 36 decks with plain white boxes, including shipping to France. Go through the process to see how much it would cost you (no account needed \o/)</p>
+<p>
+The site might be long to load, but the card quality is good, and it allow you to order custom deck in only one exemplar (most other sites require a too-high minimum order).
+</p>
+
+<p>
+I recommend to use more smaller deck and to stay on the 36 cards deck. The zip file will have a front card, and a score card (to print multiple time if you need) to. So chose the number of puzzle as (36-1-(nb score cards))/2 in the generator.
+</p>
+<p>
+On the printer-studio link above click 'personalize it', then the 'Image & test' > 'Different images' button.
+</p>
+<b-card no-body style="max-width: 700px;" img-src="[[ url_for('static', filename='image-text.png')]]"> 
+</b-card>
+<p>
+For the front side, first upload all file at once from the 'recto' folder on the zip file. Then use the little 'help me autofill' link to automate the association. Optionnaly re-add the last score card if you want it multiple times.
+</p>
+<b-card no-body style="max-width: 700px;" img-src="[[ url_for('static', filename='upload.png')]]"> 
+</b-card>
+<p>
+When all front card are done, click next, skip the 'add text' step,  and repeat the process with the 'verso' folder.
+</p>
+<p>
+
+</p>
+
+
+{% endblock %}
+
+{% block footer_js %}
+<script>
+  window.app = new Vue({
+                       el: '#app',
+  })
+</script>
+{% endblock %}

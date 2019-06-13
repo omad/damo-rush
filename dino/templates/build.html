@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+  <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
+    <h6 slot="header" class="mb-0">Generate a new deck</h6>
+    <b-card-text>processing deck ID: {{deck.id}}</b-card-text>
+    <b-progress
+      :value="100"
+      :max="100"
+      v-bind:variant="getBarColor()"
+      v-bind:animated="!dlready"
+      ></b-progress>
+  </b-card>
+</div>
+<p v-if="dlready">
+<a v-bind:href="'/dl/'.concat(deck.id).concat('.zip')"><ion-icon style="font-size: 100px" name="cloud-download"></ion-icon></a>
+</p>
+
+<p v-if="dlready">
+The generated deck will still be available in the 'Donwload list' section for some times (The site will delete the older deck when it run out of storing space).
+</p>
+
+{% endblock %}
+
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+          data () {
+            return {
+              deck: {
+                id:'[[deck_id]]',
+                step:'',
+              },
+              dlready: false,
+            }
+          },
+          methods: {
+            gen_deck: function (event) {
+              this.dlready = false;
+              axios
+                .get('/api/new_deck/'.concat(this.deck.id))
+                .then(response => {
+                  this.deck = response.data
+
+                  // we need to keep context, setinterval is executed without Vue context
+                  var self = this;
+                  this.refresh_progress = setInterval(function(){
+                    axios
+                      .get('/api/status/'.concat(self.deck.id))
+                      .then(response => (self.deck = response.data));
+                    if (self.deck.step === 'done') {
+                      clearInterval(self.refresh_progress);
+                    }
+                  }, 500);
+                });
+            },
+            getBarColor(){
+              if (this.deck.step === "done"){
+                this.dlready = true;
+                return "success";
+              }
+              return "primary";
+            }
+          },
+          mounted() {
+            this.gen_deck();
+          },
+  })
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p class="text-success">Total download : {{total}} </p>
+
+<b-table
+      show-empty
+      stacked="md"
+      :items="items"
+      :fields="fields"
+      >
+
+</b-table>
+{% endblock %}
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+          data () {
+            return {
+              fields: [
+                { 
+                  key: 'id',
+                  label: 'Filename',
+                  sortable: true
+                },
+                { 
+                  key: 'nb',
+                  label: 'Number of download',
+                  sortable: true
+                },
+              ],
+              items: [],
+              total: 0,
+            }
+          },
+          mounted: function () {
+            axios
+              .get('/api/stats')
+              .then(response => {
+                this.items = response.data.list;
+                this.total = response.data.total;
+              });
+          }
+  })
+</script>
+{% endblock %}

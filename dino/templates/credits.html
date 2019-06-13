@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+<b-jumbotron bg-variant="primary" text-variant="white">
+  <template slot="header">Credits</template>
+</b-jumbotron>
+<h2>Database</h2>
+The puzzle database is taken from the brilliant work of Michael Fogleman:
+<a href="https://www.michaelfogleman.com/rush">Solving Rush Hour, the Puzzle</a>.
+He is the one that did all the hard work!
+
+<h2>Graphics</h2>
+Original graphics are designed by Freepick and are available at:
+<ul>
+  <li><a href="https://www.freepik.com/free-vector/simple-flat-car-collection_1349613.htm">cars</a></li>
+  <li><a href="https://www.freepik.com/free-vector/top-view-of-flat-cars-and-trucks_1349627.htm">truck</a></li>
+  <li><a href="https://www.flaticon.com/free-icon/barrier_1166550">barrier</a></li>
+  <li><a href="https://www.flaticon.com/packs/dinosaurs">dinosaurs</a></li>
+</ul>
+
+<h2>Font</h2>
+<ul>
+  <li><a href="https://fonts.google.com/specimen/Graduate">Graduate</a> for cards numbers.</li>
+  <li><a href="https://fonts.google.com/specimen/ZCOOL+KuaiLe">ZCOOL KuaiLe</a> for front card title.</li>
+  <li><a href="https://fonts.google.com/specimen/PT+Sans+Narrow">PT Sans Narrow</a> for credits.</li>
+</ul>
+
+<h2>Library</h2>
+<ul>
+  <li><a href="https://github.com/Zverik/svg-resize">SVG resize library</a> form Ilya Zverev.</li>
+</ul>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+  })
+</script>
+{% endblock %}
