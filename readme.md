@@ -1,6 +1,6 @@
 # User welcome
 
-An online instance of the web deck generator is currently available [here](dino.lagalenebleue.fr). This is probably where you want to go :)
+An online instance of the web deck generator is currently available [here](http://dino.lagalenebleue.fr). This is probably where you want to go :)
 
 # Note to developers
 
