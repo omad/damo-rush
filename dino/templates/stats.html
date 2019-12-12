@@ -1,17 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p class="text-success">Total download : {{total}} </p>
 
-<b-table
-      show-empty
-      stacked="md"
-      :items="items"
-      :fields="fields"
-      >
+<div class="section" id="app">
+  <div class="container">
+    <p class="has-text-success">Total download : {{total}} </p>
+    <table class="table">
+      <thead>
+        <tr>
+          <td>Deck id</td>
+          <td>nb</td>
+        </tr>
+      </thead>
 
-</b-table>
+      <tbody>
+        <tr v-for="item in items">
+          <td>{{item.id}}</td>
+          <td>{{item.nb}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}
+
 
 {% block footer_js %}
 <script>

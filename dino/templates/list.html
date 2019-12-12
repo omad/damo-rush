@@ -1,37 +1,43 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<b-table
-      show-empty
-      stacked="md"
-      :items="items"
-      :fields="fields"
-      >
+<div class="section" id="app">
+  <div class="container">
 
-  <template slot="icon" slot-scope="row">
-    {{row.value}}
-  </template>
+    <table class="table">
+      <thead>
+        <tr>
+          <td>Deck icon</td>
+          <td>Deck size</td>
+          <td>Starting nb move</td>
+          <td>Index Number of first puzzle</td>
+          <td>Step</td>
+          <td>Number of cars</td>
+          <td>Number of trucks</td>
+          <td>Number of walls</td>
+          <td>Download link</td>
+        </tr>
+      </thead>
 
-  <template slot="cars" slot-scope="row">
-    {{row.value[0]}} to {{row.value[1]}}
-  </template>
-
-  <template slot="trucks" slot-scope="row">
-    {{row.value[0]}} to {{row.value[1]}}
-  </template>
-  
-  <template slot="walls" slot-scope="row">
-    {{row.value[0]}} to {{row.value[1]}}
-  </template>
-
-  <template slot="url" slot-scope="row">
-    <a v-bind:href="'/dl/'.concat(row.value)">
-      <b-button size="sm">
-        Download
-      </b-button>
-    </a>
-  </template>
-</b-table>
+      <tbody>
+        <tr v-for="item in items">
+          <td>{{item.icon}}</td>
+          <td>{{item.n}}</td>
+          <td>{{item.nb_move}}</td>
+          <td>{{item.index_move}}</td>
+          <td>{{item.step}}</td>
+          <td>{{item.cars}}</td>
+          <td>{{item.trucks}}</td>
+          <td>{{item.walls}}</td>
+          <td>
+            <a v-bind:href="'/dl/'.concat(item.url)">
+              <button class="button is-link">Download</button>
+            </a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}
 
 

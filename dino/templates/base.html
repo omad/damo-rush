@@ -1,58 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dino-rush deck generator</title>
-
-    <link type="text/css" rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cyborg/bootstrap.min.css" />
-    <link type="text/css" rel="stylesheet" href="[[ url_for('static', filename='bootstrap-vue.css') ]]">
-    <link type="text/css" rel="stylesheet" href="[[ url_for('static', filename='bootstrap-vue.css') ]]">
-    <link rel="shortcut icon" href="[[ url_for('static', filename='favicon.png') ]]">
-
-    <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="shortcut icon" href="/static/favicon.png">
+    <link rel="stylesheet" href="[[ url_for('static', filename='bulma-dracula.css')]]">
+    <script src="[[ url_for('static', filename='vue.2.6.10.min.js')]]"></script>
+    <script src="[[ url_for('static', filename='axios.min.js')]]"></script>
     <script src="https://unpkg.com/ionicons@4.5.5/dist/ionicons.js"></script>
-
-<style>
-p {
-  font-size: 1em;
-  margin-top:10px;
-}
-</style>
-
   </head>
   <body>
-    <div id="app">
-      <b-navbar toggleable="lg" type="dark" variant="dark" fixed="top" sticky>
-        <b-container>
-          <b-navbar-brand href="/">Dino-Rush</b-navbar-brand>
-
-          <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
-          <b-collapse id="nav-collapse" is-nav>
-            <b-navbar-nav>
-              <b-nav-item href="/gen">Generator</b-nav-item>
-              <b-nav-item href="/list">Download list</b-nav-item>
-              <b-nav-item href="/print">How to print</b-nav-item>
-              <b-nav-item href="/credits">Credits</b-nav-item>
-              <b-nav-item href="https://gitlab.com/crazyiop/dino-rush/">Source code</b-nav-item>
-            </b-navbar-nav>
-          </b-collapse>
-        </b-container>
-      </b-navbar>
-
-      <b-container style="padding-top: 2em;">
-        {% block content %}
-        {% endblock %}
-      </b-container>
-    </div>
-
-    {% block footer_js %}
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="/">
+            <i class="fas fa-download" aria-hidden="true"></i><strong>Dino-Rush</strong>
+          </a>
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="mynavbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        <div class="navbar-end">
+          <a class="navbar-item" href="/gen">Generator</a>
+          <a class="navbar-item" href="/list">Download list</a>
+          <a class="navbar-item" href="/print">How to print</a>
+          <a class="navbar-item" href="/credits">Credits</a>
+          <a class="navbar-item" href="https://gitlab.com/crazyiop/dino-rush/">Source code</a>
+        </div>
+      </div>
+      </div>
+    </nav>
+    {% block content %}
     {% endblock %}
   </body>
+  {% block footer_js %}
+  {% endblock %}
 </html>

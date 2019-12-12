@@ -1,90 +1,82 @@
 {% extends 'base.html' %}
 
-{% macro render_field(field) %}
-<b-col 
+{% macro render_field(field, cmt) %}
   {% if field.name == 'icon' %}
-  sm="12"
+  <div class="column">
   {% else %}
-  sm="3"
+  <div class="column is-one-quarter">
   {% endif %}
-  >
 
   <dl>
     <dt>[[ field.label ]]</dt>
     <dd>
     {% if field.name == 'icon' %}
-    <b-row>
+    <div class="columns">
       {% for subfield in field %}
-      <b-col center>
+      <div class="column">
         <label for=[[subfield.id]]>
           [[ subfield ]]
           <b-img thumbnail fluid margin-bottom="10px" src="../dl/[[subfield.data]].svg" alt=[[subfield.data]] width="60px"></b-img></br>
           [[ subfield.data ]]</label>
-        </br>
-      </b-col>
+      </div>
       {% endfor %}
-    </b-row>
+    </div>
     {% else %}
-    [[ field(class_="form-control") ]]
+    [[ field(class_="input") ]]
+    <br>
+    [[cmt]]
     {% endif %}
 
     {% if field.errors %}
     {% for error in field.errors %}
-    <p class="text-danger">[[ error ]]</p>
+    <p class="has-text-danger">[[ error ]]</p>
     {% endfor %}
     {% endif %}
     </dd>
     <dd>
     </dd>
   </dl>
-</b-col>
+</div>
 {% endmacro %}
 
 {% block content %}
-<p>
-The default value below represent the hardest (as in number of move require) puzzles (nb_move=60, index_move=1), using a normal physical board. You'll need mostly to adjust truck-max, wall-max if using additional pieces.
-</p>
+<div class="container">
+  <div class="section">
+    <article class="message is-info">
+      <div class="message-header">
+        <p>Generate a new deck</p>
+      </div>
+      <div class="message-body">
+        <form method="POST" action="/gen/submit_deck">
+          [[ form.csrf_token ]]
+          <div class="columns">
+            [[ render_field(form.icon,'') ]]
+          </div>
+          <div class="columns is-multiline">
+            [[ render_field(form.nb_move,'number of required move for hardest card of the deck') ]]
+            [[ render_field(form.index_move,'index in the database for nb_move') ]]
+            [[ render_field(form.n,'number of cards in the deck') ]]
+            [[ render_field(form.step,'distance between two card (for spaced level deck, not available yet)') ]]
+            [[ render_field(form.car_min,'minimum car on every cards') ]]
+            [[ render_field(form.car_max,'maximum number of car on every cards') ]]
+            [[ render_field(form.truck_min,'minimum truck on every cards') ]]
+            [[ render_field(form.truck_max,'maximum truck on every cards') ]]
+            [[ render_field(form.wall_min,'minimum wall on every cards (require additional diy pieces)') ]]
+            [[ render_field(form.wall_max,'maximum wall on every cards') ]]
+          </div>
+          <div class="control">
+            <button class="button is-link">Submit</button>
+          </div>
+        </form>
+        <p>Note: A score card will be included in the deck, to keep track of your achievement, It will include at most 84 tick box for the first 84 puzzles. I thus recommend you to not go over this number for a deck...</p>
 
-<p>
-The nb_move, nb_index represent the position of the hard side of the range that will be in the deck. nb_move is the total of move needed to solve the puzzle (60 is the max possible), while nb_index is the puzzle number at that number of move (this depends for each difficulty...).
-</p>
+      </div>
+    </article>
 
+    <p>
+    To print consecutive deck, first start at nb_move=60, index_move=1 (this is the hardest problem in the database) if you want the hardest deck, then use x, y+1 where x,y are the number of the easiest card (last one) of the previous deck you generated.
+    </p>
 
-<p>
-To print consecutive deck, first start at 60,1 if you want the hardest, then continue with the x, y+1 where x,y are the number of the easy side of the previous deck you generated.
-</p>
-
-<div>
-  <b-card header-tag="header" border-variant="primary" header-bg-variant="primary" header-text-variant="white">
-    <h6 slot="header" class="mb-0">Generate a new deck</h6>
-    <form method="POST" action="/gen/submit_deck">
-      <b-row>
-        [[ form.csrf_token ]]
-
-        [[ render_field(form.icon) ]]
-        [[ render_field(form.nb_move) ]]
-        [[ render_field(form.index_move) ]]
-        [[ render_field(form.n) ]]
-        [[ render_field(form.step) ]]
-        [[ render_field(form.car_min) ]]
-        [[ render_field(form.car_max) ]]
-        [[ render_field(form.truck_min) ]]
-        [[ render_field(form.truck_max) ]]
-        [[ render_field(form.wall_min) ]]
-        [[ render_field(form.wall_max) ]]
-      </b-row>
-      <input type="submit" value="Go" class="btn btn-primary">
-    </form>
-    <p>Note: A score card will be included in the deck, to keep track of your achievement, It will include at most 84 tick box for the first 84 puzzles. I thus recommend you to not go over this number for a deck...</p>
-  </b-card>
+  </div>
 </div>
-{% endblock %}
-
-
-{% block footer_js %}
-<script>
-  new Vue({
-          el: '#app',
-  })
-</script>
 {% endblock %}

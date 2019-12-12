@@ -1,44 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<b-jumbotron bg-variant="primary" text-variant="white">
-  <template slot="header">Dino-Rush</template>
-  <template slot="lead">
-    Get your personalized puzzle deck for the rush hour game from a 2 million+ puzzles database !
-  </template>
-</b-jumbotron>
-
-<p>
-This site let you generate files to print you own deck of puzzle. The format is especially designed so that you can order real card on specific website so that you'll end up with something like this:
-</p>
-
-<div>
-  <b-img src="[[ url_for('static', filename='printed_result.jpg') ]]" fluid alt="printed result"></b-img>
+<div class="container">
+  <section class="hero is-info">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          Dino-Rush
+        </h1>
+        <h2 class="subtitle">
+          Get your personalized puzzle deck for the rush hour game from a 2 million+ puzzles database !
+        </h2>
+      </div>
+  </section>
 </div>
 
-<p>
-The database used include "all interresting puzzle". You only need to provide the number of car, truck and wall you physicaly have and a difficulty and you can generates puzzles that fit your game. 
-Additional truck can be purchase with the 'limo' extension raising the truck limit to 5. 
-The two unmovable 1x1 cells called wall/barrier can be easily diy, I made those one usin Fimo dough:
-</p>
+<section class="section">
+  <div class="container content">
+    <p>
+    This site let you generate files to print you own deck of puzzle. The format is especially designed so that you can order real card on specific website so that you'll end up with something like this:
+    </p>
 
-<div>
-  <b-img src="[[ url_for('static', filename='barrier.jpg') ]]" fluid center alt="barrier"></b-img>
-</div>
+    <figure class="image">
+      <img src="[[ url_for('static', filename='printed_result.jpg') ]]" alt="printed result">
+    </figure>
 
-<p>
-I would recommand you to built those 2 barriers as they unlock quite a lot of puzzle, and introduce a nice diversity to the challenge.
-</p>
 
-<p>
-Why the name 'Dino-rush'? : I needed some icon to diferrentiate some decks, and the first things I thought about were dinosaure... No more than that, really :)
-</p>
-{% endblock %}
+    <p>
+    The database used include "all interresting puzzle". You only need to provide the number of car, truck and wall you physicaly have and a difficulty and you can generates puzzles that fit your game. 
+    Additional truck can be purchase with the 'limo' extension raising the truck limit to 5. 
+    The two unmovable 1x1 cells called wall/barrier can be easily diy, I made those one usin Fimo dough:
+    </p>
 
-{% block footer_js %}
-<script>
-  window.app = new Vue({
-                       el: '#app',
-  })
-</script>
-{% endblock %}
+    <div>
+      <b-img src="[[ url_for('static', filename='barrier.jpg') ]]" fluid center alt="barrier"></b-img>
+    </div>
+
+    <p>
+    I would recommand you to built those 2 barriers as they unlock quite a lot of puzzle, and introduce a nice diversity to the challenge.
+    </p>
+
+    <p>
+    Why the name 'Dino-rush'? : I needed some icon to diferrentiate some decks, and the first things I thought about were dinosaure... No more than that, really :)
+    </p>
+  </div>
+</section>
+  {% endblock %}
+
+  {% block footer_js %}
+  <script>
+    window.app = new Vue({
+                         el: '#app',
+    })
+  </script>
+  {% endblock %}
