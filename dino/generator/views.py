@@ -80,7 +80,7 @@ class ExportingThread(threading.Thread):
 
         os.makedirs(cards_dir)
 
-        with ZipFile(deck_file+'.tmp', "w") as myzip:
+        with ZipFile(deck_file + ".tmp", "w") as myzip:
             # front title card
             card = cards.generate_front_title_card(self.args["icon"])
             card_filename = "front.png"
@@ -104,7 +104,7 @@ class ExportingThread(threading.Thread):
             for i, row in enumerate(self.rows):
                 side = "verso" if i % 2 else "recto"
                 card_filename = f"{i + 1}.png"
-                print(f'[gen] {card_filename}')
+                print(f"[gen] {card_filename}")
                 card_arcname = os.path.join(
                     side, f"{1 + i // 2:0{len(str(1 + self.args['n'] // 2))}d}.png"
                 )
@@ -146,7 +146,7 @@ class ExportingThread(threading.Thread):
             myzip.write(card_filepath, arcname=card_arcname)
 
         shutil.rmtree(cards_dir)
-        os.rename(deck_file+'.tmp', deck_file)
+        os.rename(deck_file + ".tmp", deck_file)
         self.step = "done"
 
 
@@ -296,12 +296,15 @@ def build_deck(deck_id):
     global running_processes
     running_processes[deck_id] = ExportingThread(rows, args)
     running_processes[deck_id].start()
-    return jsonify({"id": deck_id, "step": "starting_generation"})
+    return jsonify({"id": deck_id, "step": "starting_generation", "percent": 0})
 
 
 @generator.route("/api/status/<string:deck_id>")
 def status(deck_id):
-    if os.path.exists(os.path.join("deck_output", f"{deck_id}")):
-        return jsonify({"id": deck_id, "step": "in_preparation"})
+    tmp_path = os.path.join("deck_output", f"{deck_id}")
+    if os.path.exists(tmp_path):
+        files = os.listdir(tmp_path)
+        percent = int(100 * len(files) / _get_list_info(deck_id)["n"])
+        return jsonify({"id": deck_id, "step": "in_preparation", "percent": percent})
 
-    return jsonify({"id": deck_id, "step": "done"})
+    return jsonify({"id": deck_id, "step": "done", "percent": 100})
