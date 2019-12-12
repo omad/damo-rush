@@ -11,7 +11,7 @@
     <p>It takes aproximately 1s to generate 2 to 3 cards...</p>
     <progress class="progress" v-bind:class="{'is-success':deck.percent==100, 'is-info':deck.percent!=100}" v-bind:value="deck.percent" max="100"></progress>
     <p v-show="deck.percent==100">
-    <a v-bind:href="'/dl/'.concat(deck.id).concat('.zip')"><ion-icon style="font-size: 100px" name="cloud-download"></ion-icon></a>
+    <a v-bind:href="'/dl/'.concat(deck.id).concat('.zip')"><ion-icon name="cloud-download"></ion-icon> Download here <ion-icon name="cloud-download"></ion-icon> </a>
     </p>
 
     <p v-show="deck.percent==100">
