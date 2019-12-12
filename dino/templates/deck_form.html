@@ -15,9 +15,12 @@
       {% for subfield in field %}
       <div class="column">
         <label for=[[subfield.id]]>
+          <figure class="image">
+              <img src="../dl/[[subfield.data]].svg" style="max-width:60px"> 
+          </figure>
           [[ subfield ]]
-          <b-img thumbnail fluid margin-bottom="10px" src="../dl/[[subfield.data]].svg" alt=[[subfield.data]] width="60px"></b-img></br>
-          [[ subfield.data ]]</label>
+          [[ subfield.data ]]
+        </label>
       </div>
       {% endfor %}
     </div>
