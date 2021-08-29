@@ -1,6 +1,7 @@
 import os
 import shutil
 import threading
+from io import BytesIO
 from zipfile import ZipFile
 
 from flask import (
@@ -11,15 +12,14 @@ from flask import (
     send_from_directory,
     redirect,
     abort,
+    send_file,
 )
-
 from flask_wtf import FlaskForm
 from wtforms import RadioField, DecimalField
 from wtforms.validators import DataRequired, NumberRange
 
-from dino.generator import cards
 from dino.db import get_db
-
+from dino.generator import cards
 
 generator = Blueprint("generator", __name__)
 running_processes = {}
@@ -112,7 +112,7 @@ class ExportingThread(threading.Thread):
                 card_filepath = os.path.join(cards_dir, card_filename)
                 deck_info = {
                     "icon": self.args["icon"],
-                    "text": f"{i+1:0{len(str(self.args['n']))}d}",
+                    "text": f"{i + 1:0{len(str(self.args['n']))}d}",
                 }
 
                 card = cards.generate_puzzle_card(row, deck_info)
@@ -174,12 +174,12 @@ def dl_deck(path):
     if os.path.isfile(os.path.join("deck_output", path)):
         con = get_db()
         c = con.cursor()
-        c.execute("SELECT * FROM dl_count WHERE id = ?", (path,))
+        c.execute("select * from dl_count where id = ?", (path,))
         res = c.fetchone()
         if res is None:
-            c.execute("INSERT INTO dl_count (id, nb) VALUES (?, ?)", (path, 1))
+            c.execute("insert into dl_count (id, nb) values (?, ?)", (path, 1))
         else:
-            c.execute("UPDATE dl_count SET nb = ? WHERE id = ?", (res["nb"] + 1, path))
+            c.execute("update dl_count set nb = ? where id = ?", (res["nb"] + 1, path))
         con.commit()
         return send_from_directory(directory="../deck_output", filename=path)
 
@@ -280,11 +280,11 @@ def build_deck(deck_id):
     print(row)
     c.execute(
         """
-        SELECT * FROM games
+        select * from games
         where nb_wall between ? and ?
         and nb_car between ? and ?
         and nb_truck between ? and ?
-         LIMIT ?
+         limit ?
         """,
         (*walls, *cars, *trucks, args["n"] + 1),
     )
@@ -308,3 +308,88 @@ def status(deck_id):
         return jsonify({"id": deck_id, "step": "in_preparation", "percent": percent})
 
     return jsonify({"id": deck_id, "step": "done", "percent": 100})
+
+
+@generator.route("/random")
+def random():
+    min_moves = request.args.get('min', 6)
+    max_moves = request.args.get('max', 24)
+    card = random_card_image(min_moves, max_moves)
+
+    return send_file(card, mimetype='image/png', as_attachment=False)
+
+
+def random_card_image(min_moves, max_moves):
+    c = get_db().cursor()
+    c.execute("""
+    with LIMITS as (
+        -- Rows are ordered id min id = hardest
+        select min(id) as hardest, max(id) as easiest
+        from games
+        where nb_move <= ? and nb_move >= ?
+    )
+    select *
+    from games
+    where id > (
+        select abs(random()) % ((select easiest from LIMITS) - (select hardest from LIMITS)) + (select hardest from LIMITS)
+    ) and nb_wall = 0
+    and nb_truck <= 4
+    and nb_car <= 7
+    limit 1;
+   """, (max_moves, min_moves))
+    # Test if asked starting pos exist
+    row = c.fetchone()
+    card = cards.generate_puzzle_card(row)
+
+    output = BytesIO()
+    card.convert('RGBA').save(output, format='PNG')
+    output.seek(0, 0)
+    return output
+
+
+@generator.route("/test")
+def test():
+    return jsonify({"args": request.args})
+
+
+@generator.route("/card/<string:card_id>")
+def show_card(card_id):
+    c = get_db().cursor()
+
+    c.execute(
+        "select * from games where id = ?",
+        (int(card_id),),
+    )
+
+    # Test if asked starting pos exist
+    row = c.fetchone()
+
+    card = cards.generate_puzzle_card(row)
+
+    return send_file(card, mimetype='image/png', as_attachment=False)
+
+
+@generator.route("/pdf")
+def generate_pdf():
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.units import mm
+    from reportlab.lib.utils import ImageReader
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.colors import pink, black
+    c = canvas.Canvas('myfile.pdf', pagesize=landscape(A4))
+    width, height = landscape(A4)
+    for i in range(8):
+        num_moves = i + 6
+        card = ImageReader(random_card_image(num_moves, num_moves))
+        row = 1 if i <= 3 else 0
+        col = i % 4
+        c.drawImage(card,
+                         x=(col * 75 * mm) - 1.5 * mm,
+                         y=(100 * mm * row) + 5 * mm,
+                         width=75 * mm, height=100 * mm)
+    c.setStrokeColor(black)
+    # draw some lines
+    c.grid([(75*mm*x)-1.5*mm for x in range(6)], [0*mm, 105*mm, 210*mm])
+    c.showPage()
+    c.save()
+    return send_file('../myfile.pdf', mimetype='application/pdf')

@@ -4,3 +4,4 @@ cairosvg
 lxml
 qrcode
 pillow
+reportlab

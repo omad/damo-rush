@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section" id="app">
+  <div class="container">
+      <section class="hero is-info">
+          <div class="hero-body">
+              <div class="container">
+                  <h1 class="title">
+                      Random Card
+                  </h1>
+              </div>
+      </section>
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block footer_js %}
+<script>
+  new Vue({
+          el: '#app',
+          data () {
+            return {
+              fields: [
+                { 
+                  key: 'icon',
+                  label: 'Deck icon',
+                  sortable: true
+                },
+                { 
+                  key: 'nb_move',
+                  label: 'Starting nb move',
+                  sortable: true
+                },
+                { 
+                  key: 'index_move',
+                  label: 'Index',
+                  sortable: true
+                },
+                { 
+                  key: 'n',
+                  label: 'Number of puzzle',
+                  sortable: true
+                },
+                { 
+                  key: 'step',
+                  label: 'Step',
+                  sortable: true
+                },
+                { 
+                  key: 'cars',
+                  label: 'Number of cars',
+                  sortable: true
+                },
+                { 
+                  key: 'trucks',
+                  label: 'Number of trucks',
+                  sortable: true
+                },
+                { 
+                  key: 'walls',
+                  label: 'Number of walls',
+                  sortable: true
+                },
+                { 
+                  key: 'url',
+                  label: 'Download link',
+                }
+              ],
+              items: [],
+            }
+          },
+          mounted: function () {
+            axios
+              .get('/api/list')
+              .then(response => {
+                this.items = response.data
+              });
+          }
+  })
+</script>
+{% endblock %}

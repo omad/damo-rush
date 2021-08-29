@@ -114,10 +114,18 @@ def _get_base_card(rotate=False):
         ]
     )
 
-    return Image.new("RGBA", use_template["bleed"]), safe_offset
+    return Image.new("RGBA", use_template["bleed"], color='white'), safe_offset
 
 
 def generate_puzzle_card(puzzle, deck_data=None, unit=100):
+    """
+    Return a PIL.Image of a puzzle card.
+    :param puzzle: A row from the database table of puzzles
+    :param deck_data:
+    :param unit:
+    :return:
+    """
+
     card, safe_offset = _get_base_card()
     puzzle_img = _make_puzzle_img(json.loads(puzzle["elements"]), unit)
 
